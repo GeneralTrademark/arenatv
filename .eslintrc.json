@@ -16,5 +16,8 @@
       "func-names":["error", "never"],
       "prefer-arrow-callback": ["off", { "allowUnboundThis": true }]
     },
-    "globals": { "fetch": false }
+    "globals": {
+      "fetch": false,
+      "window": false
+    }
 }

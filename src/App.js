@@ -3,7 +3,6 @@ import './App.css'
 import VideoPlayer from './VideoPlayer'
 import config from './config'
 
-
 class App extends Component {
   constructor(props) {
     super(props)

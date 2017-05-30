@@ -31,6 +31,8 @@ class VideoPlayer extends React.Component {
 
   render() {
     const opts = {
+      height: window.innerHeight,
+      width: window.innerWidth,
       playerVars: { // https://developers.google.com/youtube/player_parameters
         autoplay: 1,
         theme: 'dark',
@@ -48,12 +50,10 @@ class VideoPlayer extends React.Component {
         <YouTube
           videoId={this.state.videoId}
           onReady={this.onReady}
-          opts={opts} />
-        <button onClick={this.onMuteVideo}>Mute</button>
-        {/* <button onClick={this.onPlayVideo}>Play</button> */}
-        {/* <button onClick={this.onPauseVideo}>Pause</button> */}
-        {/* <button onClick={this.onChangeVideo}>Change Video</button> */}
-        {/* <button onClick={this.onChangeTime}>time</button> */}
+          opts={opts}
+          className="video"
+        />
+        <button className="button" onClick={this.onMuteVideo}>Mute</button>
       </div>
     )
   }
