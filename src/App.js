@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
-import YouTube from 'react-youtube'
 import './App.css'
+import VideoPlayer from './VideoPlayer'
 import config from './config'
 
 
@@ -33,28 +33,14 @@ class App extends Component {
   }
 
   render() {
-    const opts = {
-      height: '390',
-      width: '640',
-      playerVars: { // https://developers.google.com/youtube/player_parameters
-        controls: 0,
-        showInfo: 0,
-        fs: 0,
-        enablejsapi: 1,
-        disablekb: 1,
-        modestbranding: 1,
-      },
-    }
-
     return (
       <div className="App">
         <div className="App-header">
           <h2>Welcome to arenatv</h2>
         </div>
-        <YouTube
+        <VideoPlayer
           start={10}
           videoId={this.state.currentVideoId}
-          opts={opts}
         />
       </div>
     )
