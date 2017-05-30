@@ -1,5 +1,4 @@
 import React from 'react'
-// import ReactDOM from 'react-dom'
 import YouTube from 'react-youtube'
 
 class VideoPlayer extends React.Component {
@@ -7,7 +6,7 @@ class VideoPlayer extends React.Component {
     super(props)
 
     this.state = {
-      videoId: props.videoUrl,
+      videoId: props.videoId,
       player: null,
       muted: false,
     }
@@ -20,7 +19,6 @@ class VideoPlayer extends React.Component {
     })
     this.state.player.playVideo()
     this.state.player.removeEventListener('click', 'pause')
-    // console.log(this.state.player.getDuration())
     this.state.player.seekTo(this.props.seekTime, true)
   }
 
@@ -29,11 +27,6 @@ class VideoPlayer extends React.Component {
     this.setState({
       muted: !this.state.muted,
     })
-  }
-
-  preventPause = (event) => {
-    console.log('hi')
-    event.preventDefault()
   }
 
   render() {
@@ -55,9 +48,7 @@ class VideoPlayer extends React.Component {
         <YouTube
           videoId={this.state.videoId}
           onReady={this.onReady}
-          onClick={this.preventPause}
-          opts={opts}
-        />
+          opts={opts} />
         <button onClick={this.onMuteVideo}>Mute</button>
         {/* <button onClick={this.onPlayVideo}>Play</button> */}
         {/* <button onClick={this.onPauseVideo}>Pause</button> */}
