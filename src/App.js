@@ -13,8 +13,8 @@ class App extends Component {
         </div>
         <VideoPlayer />
       </div>
-    );
+    )
   }
 }
 
-export default App;
+export default App
