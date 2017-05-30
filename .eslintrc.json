@@ -12,6 +12,9 @@
       "semi": [2, "never"],
       "no-extra-semi": 2,
       "react/jsx-filename-extension": [1, { "extensions": [".js", ".jsx"] }],
-      "react/prop-types": [0]
-    }
+      "react/prop-types": [0],
+      "func-names":["error", "never"],
+      "prefer-arrow-callback": ["off", { "allowUnboundThis": true }]
+    },
+    "globals": { "fetch": false }
 }
