@@ -1,6 +1,6 @@
 import React from 'react'
 // import ReactDOM from 'react-dom'
-import YouTube from './YouTube'
+import YouTube from 'react-youtube'
 
 class VideoPlayer extends React.Component {
   constructor(props) {
