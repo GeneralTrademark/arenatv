@@ -11,8 +11,10 @@
     "eslint-plugin-react": "^6.9.0"
   },
   "dependencies": {
+    "lodash": "^4.17.4",
     "react": "^15.5.4",
     "react-dom": "^15.5.4",
+    "react-youtube": "^7.4.0",
     "whatwg-fetch": "^2.0.3"
   },
   "scripts": {

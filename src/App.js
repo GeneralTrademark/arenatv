@@ -1,17 +1,61 @@
 import React, { Component } from 'react'
-// import logo from './logo.svg'
-import VideoPlayer from './VideoPlayer'
+import YouTube from 'react-youtube'
 import './App.css'
-import Home from './containers/Home'
+import config from './config'
+
 
 class App extends Component {
+  constructor(props) {
+    super(props)
+    this.state = {
+      playlistChannelSlug: 'arenatv',
+      targetBlockSlugs: [],
+      currentVideoId: 'iYJKd0rkKss',
+    }
+  }
+
+  componentWillMount() {
+    let blocks
+    const component = this
+    fetch(`${config.apiBase}/channels/${this.state.playlistChannelSlug}`)
+      .then(function (response) {
+        return response.json()
+      }).then(function (response) {
+        blocks = response.contents
+        const reqs = blocks.map(function (block) {
+          const slug = block.slug
+          return `${config.apiBase}/channels/${slug}`
+        })
+        component.setState({ targetBlockSlugs: reqs })
+      }).catch(function (ex) {
+        console.log('parsing failed', ex)
+      })
+  }
+
   render() {
+    const opts = {
+      height: '390',
+      width: '640',
+      playerVars: { // https://developers.google.com/youtube/player_parameters
+        controls: 0,
+        showInfo: 0,
+        fs: 0,
+        enablejsapi: 1,
+        disablekb: 1,
+        modestbranding: 1,
+      },
+    }
+
     return (
       <div className="App">
         <div className="App-header">
           <h2>Welcome to arenatv</h2>
         </div>
-        <VideoPlayer seekTime={10} videoUrl="iYJKd0rkKss" />
+        <YouTube
+          start={10}
+          videoId={this.state.currentVideoId}
+          opts={opts}
+        />
       </div>
     )
   }
