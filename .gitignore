@@ -3,11 +3,6 @@
 # dependencies
 /node_modules
 
-#secrets
-/arenatv_secrets
-/arenatv_secrets/secrets.json
-**/secrets.json
-
 # testing
 /coverage
 
