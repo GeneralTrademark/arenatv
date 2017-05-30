@@ -14,14 +14,13 @@ class App extends Component {
     }
   }
 
-  componentWillMount() {
-    let blocks
+  componentWillMount = () => {
     const component = this
     fetch(`${config.apiBase}/channels/${this.state.playlistChannelSlug}`)
       .then(function (response) {
         return response.json()
       }).then(function (response) {
-        blocks = response.contents
+        const blocks = response.contents
         const reqs = blocks.map(function (block) {
           const slug = block.slug
           return `${config.apiBase}/channels/${slug}`
@@ -37,12 +36,17 @@ class App extends Component {
       height: '390',
       width: '640',
       playerVars: { // https://developers.google.com/youtube/player_parameters
+        autoplay: 1,
         controls: 0,
-        showInfo: 0,
+        showinfo: 0,
+        autohide: 1,
         fs: 0,
         enablejsapi: 1,
         disablekb: 1,
         modestbranding: 1,
+        rel: 0,
+        color: 'white',
+        frameborder: 0,
       },
     }
 
