@@ -11,7 +11,11 @@
     "eslint-plugin-react": "^6.9.0"
   },
   "dependencies": {
+<<<<<<< HEAD
     "re-base": "^3.0.1",
+=======
+    "lodash": "^4.17.4",
+>>>>>>> master
     "react": "^15.5.4",
     "react-dom": "^15.5.4",
     "react-youtube": "^7.4.0",
