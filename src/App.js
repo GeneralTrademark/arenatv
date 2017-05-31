@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import './App.css'
-import VideoPlayer from './VideoPlayer'
+import Client from './Client'
 import config from './config'
 
 class App extends Component {
@@ -9,7 +9,6 @@ class App extends Component {
     this.state = {
       playlistChannelSlug: 'arenatv',
       targetBlockSlugs: [],
-      currentVideoId: 'iYJKd0rkKss',
     }
   }
 
@@ -37,10 +36,7 @@ class App extends Component {
         <div className="App-header">
           <h2>Welcome to arenatv</h2>
         </div>
-        <VideoPlayer
-          start={10}
-          videoId={this.state.currentVideoId}
-        />
+        <Client channelSlug={this.state.playlistChannelSlug} />
       </div>
     )
   }

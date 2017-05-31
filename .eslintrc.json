@@ -18,6 +18,7 @@
     },
     "globals": {
       "fetch": false,
-      "window": false
+      "window": false,
+      "document": false
     }
 }

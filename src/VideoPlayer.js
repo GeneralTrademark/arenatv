@@ -9,7 +9,18 @@ class VideoPlayer extends React.Component {
       videoId: props.videoId,
       player: null,
       muted: false,
+      width: '0',
+      height: '0',
     }
+  }
+
+  componentDidMount() {
+    this.updateWindowDimensions()
+    window.addEventListener('resize', this.updateWindowDimensions)
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener('resize', this.updateWindowDimensions)
   }
 
   onReady = (event) => {
@@ -20,6 +31,7 @@ class VideoPlayer extends React.Component {
     this.state.player.playVideo()
     this.state.player.removeEventListener('click', 'pause')
     this.state.player.seekTo(this.props.seekTime, true)
+    this.state.player.mute()
   }
 
   onMuteVideo = () => {
@@ -27,6 +39,10 @@ class VideoPlayer extends React.Component {
     this.setState({
       muted: !this.state.muted,
     })
+  }
+
+  updateWindowDimensions = () => {
+    this.setState({ width: window.innerWidth, height: window.innerHeight })
   }
 
   render() {

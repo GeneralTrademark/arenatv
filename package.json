@@ -11,8 +11,9 @@
     "eslint-plugin-react": "^6.9.0"
   },
   "dependencies": {
-    "re-base": "^3.0.1",
+    "firebase": "^4.1.0",
     "lodash": "^4.17.4",
+    "re-base": "^3.0.1",
     "react": "^15.5.4",
     "react-dom": "^15.5.4",
     "react-youtube": "^7.4.0",
