@@ -11,3 +11,13 @@ body, html {
 iframe{
   pointer-events: none;
 }
+
+.channelListItem{
+  display: flex;
+  cursor: pointer;
+  margin-top: 1rem;
+}
+
+.listContents{
+  margin-right: 1em;
+}

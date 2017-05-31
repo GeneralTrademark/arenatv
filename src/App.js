@@ -1,16 +1,17 @@
 import React, { Component } from 'react'
 import './App.css'
 import VideoPlayer from './VideoPlayer'
+import ChannelList from './ChannelList'
 import config from './config'
-
 
 class App extends Component {
   constructor(props) {
     super(props)
     this.state = {
       playlistChannelSlug: 'arenatv',
-      targetBlockSlugs: [],
+      currentChannel: 'arena-tv',
       currentVideoId: 'iYJKd0rkKss',
+      channels: [],
     }
   }
 
@@ -20,15 +21,23 @@ class App extends Component {
       .then(function (response) {
         return response.json()
       }).then(function (response) {
-        const blocks = response.contents
-        const reqs = blocks.map(function (block) {
-          const slug = block.slug
-          return `${config.apiBase}/channels/${slug}`
-        })
-        component.setState({ targetBlockSlugs: reqs })
+        const channels = response.contents
+        console.log(channels)
+        component.setState({ channels })
+        Promise.all(channels.map(block =>
+          fetch(`${config.apiBase}/channels/${block.slug}/contents`).then(resp => resp.json())
+            )).then(texts => {
+              console.log(texts)
+            })
       }).catch(function (ex) {
         console.log('parsing failed', ex)
       })
+  }
+
+  handleChangeChannel = (target) => {
+    this.setState({
+      currentChannel: target,
+    })
   }
 
   render() {
@@ -39,7 +48,11 @@ class App extends Component {
         </div>
         <VideoPlayer
           start={10}
-          videoId={this.state.currentVideoId}
+          currentVideoId={this.state.currentVideoId}
+        />
+        <ChannelList
+          handleChangeChannel={this.handleChangeChannel}
+          channels={this.state.channels}
         />
       </div>
     )
