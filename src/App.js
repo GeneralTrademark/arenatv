@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import './App.css'
 import Client from './Client'
+import ChannelList from './ChannelList'
 import config from './config'
 
 class App extends Component {
@@ -8,26 +9,35 @@ class App extends Component {
     super(props)
     this.state = {
       playlistChannelSlug: 'arenatv',
-      targetBlockSlugs: [],
+      currentChannel: 'arena-tv',
+      currentVideoId: 'iYJKd0rkKss',
+      channels: [],
     }
   }
 
-  componentWillMount() {
-    let blocks
+  componentWillMount = () => {
     const component = this
     fetch(`${config.apiBase}/channels/${this.state.playlistChannelSlug}`)
       .then(function (response) {
         return response.json()
       }).then(function (response) {
-        blocks = response.contents
-        const reqs = blocks.map(function (block) {
-          const slug = block.slug
-          return `${config.apiBase}/channels/${slug}`
-        })
-        component.setState({ targetBlockSlugs: reqs })
+        const channels = response.contents
+        console.log(channels)
+        component.setState({ channels })
+        Promise.all(channels.map(block =>
+          fetch(`${config.apiBase}/channels/${block.slug}/contents`).then(resp => resp.json())
+            )).then(texts => {
+              console.log(texts)
+            })
       }).catch(function (ex) {
         console.log('parsing failed', ex)
       })
+  }
+
+  handleChangeChannel = (target) => {
+    this.setState({
+      currentChannel: target,
+    })
   }
 
   render() {
@@ -37,6 +47,10 @@ class App extends Component {
           <h2>Welcome to arenatv</h2>
         </div>
         <Client channelSlug={this.state.playlistChannelSlug} />
+        <ChannelList
+          handleChangeChannel={this.handleChangeChannel}
+          channels={this.state.channels}
+        />
       </div>
     )
   }
