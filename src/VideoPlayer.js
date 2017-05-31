@@ -9,7 +9,18 @@ class VideoPlayer extends React.Component {
       videoId: props.videoId,
       player: null,
       muted: false,
+      width: '0',
+      height: '0',
     }
+  }
+
+  componentDidMount() {
+    this.updateWindowDimensions()
+    window.addEventListener('resize', this.updateWindowDimensions)
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener('resize', this.updateWindowDimensions)
   }
 
   onReady = (event) => {
@@ -20,6 +31,7 @@ class VideoPlayer extends React.Component {
     this.state.player.playVideo()
     this.state.player.removeEventListener('click', 'pause')
     this.state.player.seekTo(this.props.seekTime, true)
+    this.state.player.mute()
   }
 
   onMuteVideo = () => {
@@ -29,8 +41,14 @@ class VideoPlayer extends React.Component {
     })
   }
 
+  updateWindowDimensions = () => {
+    this.setState({ width: window.innerWidth, height: window.innerHeight })
+  }
+
   render() {
     const opts = {
+      height: window.innerHeight,
+      width: window.innerWidth,
       playerVars: { // https://developers.google.com/youtube/player_parameters
         autoplay: 1,
         theme: 'dark',
@@ -48,12 +66,10 @@ class VideoPlayer extends React.Component {
         <YouTube
           videoId={this.state.videoId}
           onReady={this.onReady}
-          opts={opts} />
-        <button onClick={this.onMuteVideo}>Mute</button>
-        {/* <button onClick={this.onPlayVideo}>Play</button> */}
-        {/* <button onClick={this.onPauseVideo}>Pause</button> */}
-        {/* <button onClick={this.onChangeVideo}>Change Video</button> */}
-        {/* <button onClick={this.onChangeTime}>time</button> */}
+          opts={opts}
+          className="video"
+        />
+        <button className="button" onClick={this.onMuteVideo}>Mute</button>
       </div>
     )
   }
