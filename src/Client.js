@@ -41,7 +41,8 @@ class Client extends React.Component {
       this.state.loaded
       ? <VideoPlayer
         start={this.state.details.time}
-        videoId={this.state.details.id} />
+        videoId={this.state.details.id}
+      />
       : <div> {'Not loaded'}</div>
     )
   }
