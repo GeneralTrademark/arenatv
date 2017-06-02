@@ -7,7 +7,8 @@ class Client extends React.Component {
     super(props)
     this.state = {
       currentChannel: this.props.selectedChannel,
-      currentVideo: "",
+      currentVideoId: "",
+      currentVideoIndex: 0,
       channelState: {},
       loaded: false,
       users: {},
@@ -29,6 +30,7 @@ class Client extends React.Component {
         this.setState({
           loaded: true,
           channelState: data,
+          currentVideoIndex: data.currentVideoIndex,
           currentVideoId: data.videos[data.currentVideoIndex],
         })
         console.log(data.videos[data.currentVideoIndex])
@@ -75,6 +77,50 @@ class Client extends React.Component {
         this.seekTo(time)
       },
     })
+
+    base.listenTo(`${this.state.currentChannel}/currentVideoIndex`, {
+      context: this,
+      asArray: false,
+      then(index) {
+        console.log('hearing' + index)
+        if (index > this.state.currentVideoIndex && index < this.state.currentVideoIndex + 2) {
+          this.skipToNext(index)
+        }
+      },
+    })
+  }
+
+  onEnd = (event) => {
+    console.log('end of video')
+    base.fetch(`${this.state.currentChannel}/currentVideoIndex`, {
+      context: this,
+      asArray: false,
+      then(index) {
+        this.incrementVideoIndex(index)
+      },
+    })
+  }
+
+  skipToNext = (index) => {
+    console.log('trying to skip to next')
+    this.setState({
+      currentVideoIndex: index,
+      currentVideoId: this.state.channelState.videos[index],
+    })
+    base.update(`${this.state.currentChannel}`, {
+      data: { time: 0 },
+    })
+  }
+
+  incrementVideoIndex = (index) => {
+    console.log('trying to increase from ' + index)
+    if (index === this.state.currentVideoIndex) {
+      console.log('trying to write' + index)
+      base.update(`${this.state.currentChannel}`, {
+        data: { currentVideoIndex: this.state.currentVideoIndex+1},
+      })
+      this.skipToNext(index+1)
+    }
   }
 
   onMuteVideo = () => {
@@ -115,7 +161,7 @@ class Client extends React.Component {
           users.forEach((user) => {
             counter++
             timeStamps.push(user.time)
-            // Once done - pick the largest value from that array and set channel state
+            // Once done - pick the largest indexue from that array and set channel state
             if (counter === users.length) {
               that.setTimestamp(Math.max(...timeStamps))
             }
@@ -156,6 +202,7 @@ class Client extends React.Component {
         <YouTube
           videoId={this.state.currentVideoId}
           onReady={this.onReady}
+          onEnd={this.onEnd}
           opts={opts}
           className="video"
         />
