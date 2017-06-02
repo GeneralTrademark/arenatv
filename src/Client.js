@@ -6,30 +6,31 @@ class Client extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
-      details: {},
+      channelState: {},
       loaded: false,
       users: {},
       userKey: null,
-      alive: false,
-      allTime: null,
-      name: '',
       player: null,
       muted: false,
     }
   }
 
   componentWillMount() {
-    base.bindToState('arenatv', {
+    // Get channel state and update internal state with the data
+    // Then make a new user in the channel
+    // When loaded, the react-youtube will make a video w/the channel's current youtube url and time
+    // See onReady for next steps
+    base.listenTo('arenatv', {
       context: this,
-      state: 'details',
       asArray: false,
-      then() {
+      then(data) {
         this.setState({
           loaded: true,
+          channelState: data,
         })
-        this.addUser()
       },
     })
+    this.addUser()
   }
 
   componentWillUnmount() {
@@ -37,74 +38,97 @@ class Client extends React.Component {
   }
 
   onReady = (event) => {
-    console.log(`YouTube Player object for videoId: "${this.state.details.id}" has been saved to state.`) // eslint-disable-line
+    // When the youtube video is loaded - set up listeners and play the video
     this.setState({
       player: event.target,
     })
 
     this.state.player.playVideo()
-    this.state.player.seekTo(this.state.details.time, true)
+    this.state.player.seekTo(this.state.channelState.time, true)
     this.state.player.mute()
 
+    // Update the the user on firebase with the current video time
+    base.update(`users/${this.state.userKey}`, {
+      data: { time: this.state.channelState.time },
+    })
+
+    // If there are changes in users
     base.listenTo('users', {
       context: this,
       asArray: true,
-      then(data) {
-        this.checkData(data)
+      then(users) {
+        // Check everyone's timeStamp
+        this.checkTimestamps(users)
       },
     })
+
+    // If there are changes to the channel's state
     base.listenTo('arenatv/time', {
       context: this,
       asArray: false,
-      then(data) {
-        data > Math.round(this.state.player.getCurrentTime()) + 10 ? this.seekTo(data) : null
+      then(time) {
+        // See if you need to catch up
+        this.seekTo(time)
       },
     })
   }
 
   onMuteVideo = () => {
-    this.state.muted ? this.state.player.unMute() : this.state.player.mute()
+    const muted = this.state.muted ? this.state.player.unMute() : this.state.player.mute()
     this.setState({
-      muted: !this.state.muted,
+      muted: !muted,
     })
   }
 
-  setTime = (time) => {
-    base.update('arenatv', {
-      data: { time: time }
-    })
-  }
-
-  seekTo = (time) => {
-    this.state.player.playVideo()
-    this.state.player.seekTo(time, true)
-    base.update(`users/${this.state.userKey}`, {
-      data: { time: Math.round(this.state.player.getCurrentTime()) }
-    })
-  }
-
-  checkData = (data) => {
-    if (this.state.player.getPlayerState() === 1) {
-      base.update(`users/${this.state.userKey}`, {
+  setTimestamp = (timeStamp) => {
+    // Only set the channel state if you are ahead of everyone else
+    if (timeStamp < Math.round(this.state.player.getCurrentTime())) {
+      base.update('arenatv', {
         data: { time: Math.round(this.state.player.getCurrentTime()) },
       })
     }
-    data.forEach((user) => {
-      if (user.time > this.state.player.getCurrentTime()) {
-        this.setTime(user.time)
-      }
-    })
+  }
+
+  seekTo = (time) => {
+    // If you are more than 5 seconds behind the channel state seekTo
+    if ((time + 5) > Math.round(this.state.player.getCurrentTime())) {
+      this.state.player.playVideo()
+      this.state.player.seekTo(time, true)
+      this.state.player.mute()
+    }
+  }
+
+  checkTimestamps = (users) => {
+    // If your video is actually playing update your user timeStamp with the currentTime
+    if (this.state.player.getPlayerState() === 1) {
+      const that = this
+      base.update(`users/${this.state.userKey}`, {
+        data: { time: Math.round(this.state.player.getCurrentTime()) },
+        then() {
+          const timeStamps = []
+          let counter = 0
+          // Look through active users and store their timeStamps in an array
+          users.forEach((user) => {
+            counter++
+            timeStamps.push(user.time)
+            // Once done - pick the largest value from that array and set channel state
+            if (counter === users.length) {
+              that.setTimestamp(Math.max(...timeStamps))
+            }
+          })
+        },
+      })
+    }
   }
 
   addUser = () => {
+    // Add user and set listener for onDisconnect
     const ref = base.push('users', {
-      data: {
-        time: this.state.details.time,
-      },
+      data: { time: 0 },
     })
     ref.onDisconnect().remove()
     const generatedKey = ref.key
-    this.setState({ userKey: generatedKey, alive: true })
+    this.setState({ userKey: generatedKey })
   }
 
   render() {
@@ -126,7 +150,7 @@ class Client extends React.Component {
       this.state.loaded
       ? <div>
         <YouTube
-          videoId={this.state.details.id}
+          videoId={this.state.channelState.id}
           onReady={this.onReady}
           opts={opts}
           className="video"
