@@ -9,7 +9,7 @@ class App extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      playlistChannelSlug: 'arenatv',
+      playlistChannelSlug: 'arena-tv',
       currentChannel: 'arena-tv',
       currentVideoId: 'iYJKd0rkKss',
       channels: [],
@@ -90,7 +90,7 @@ class App extends Component {
         <div className="App-header">
           <h2>Welcome to arenatv</h2>
         </div>
-        <Client channelSlug={this.state.playlistChannelSlug} />
+        <Client selectedChannel={this.state.currentChannel} />
         <ChannelList
           handleChangeChannel={this.handleChangeChannel}
           channels={this.state.channels}

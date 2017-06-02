@@ -6,6 +6,8 @@ class Client extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
+      currentChannel: this.props.selectedChannel,
+      currentVideo: "",
       channelState: {},
       loaded: false,
       users: {},
@@ -20,14 +22,16 @@ class Client extends React.Component {
     // Then make a new user in the channel
     // When loaded, the react-youtube will make a video w/the channel's current youtube url and time
     // See onReady for next steps
-    base.listenTo('arenatv', {
+    base.listenTo(`${this.state.currentChannel}`, {
       context: this,
       asArray: false,
       then(data) {
         this.setState({
           loaded: true,
           channelState: data,
+          currentVideoId: data.videos[data.currentVideoIndex],
         })
+        console.log(data.videos[data.currentVideoIndex])
       },
     })
     this.addUser()
@@ -48,12 +52,12 @@ class Client extends React.Component {
     this.state.player.mute()
 
     // Update the the user on firebase with the current video time
-    base.update(`users/${this.state.userKey}`, {
+    base.update(`${this.state.currentChannel}/users/${this.state.userKey}`, {
       data: { time: this.state.channelState.time },
     })
 
     // If there are changes in users
-    base.listenTo('users', {
+    base.listenTo(`${this.state.currentChannel}/users`, {
       context: this,
       asArray: true,
       then(users) {
@@ -63,7 +67,7 @@ class Client extends React.Component {
     })
 
     // If there are changes to the channel's state
-    base.listenTo('arenatv/time', {
+    base.listenTo(`${this.state.currentChannel}/time`, {
       context: this,
       asArray: false,
       then(time) {
@@ -83,7 +87,7 @@ class Client extends React.Component {
   setTimestamp = (timeStamp) => {
     // Only set the channel state if you are ahead of everyone else
     if (timeStamp < Math.round(this.state.player.getCurrentTime())) {
-      base.update('arenatv', {
+      base.update(`${this.state.currentChannel}`, {
         data: { time: Math.round(this.state.player.getCurrentTime()) },
       })
     }
@@ -102,7 +106,7 @@ class Client extends React.Component {
     // If your video is actually playing update your user timeStamp with the currentTime
     if (this.state.player.getPlayerState() === 1) {
       const that = this
-      base.update(`users/${this.state.userKey}`, {
+      base.update(`${this.state.currentChannel}/users/${this.state.userKey}`, {
         data: { time: Math.round(this.state.player.getCurrentTime()) },
         then() {
           const timeStamps = []
@@ -123,7 +127,7 @@ class Client extends React.Component {
 
   addUser = () => {
     // Add user and set listener for onDisconnect
-    const ref = base.push('users', {
+    const ref = base.push(`${this.state.currentChannel}/users`, {
       data: { time: 0 },
     })
     ref.onDisconnect().remove()
@@ -150,7 +154,7 @@ class Client extends React.Component {
       this.state.loaded
       ? <div>
         <YouTube
-          videoId={this.state.channelState.id}
+          videoId={this.state.currentVideoId}
           onReady={this.onReady}
           opts={opts}
           className="video"
