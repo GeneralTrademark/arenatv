@@ -2,6 +2,8 @@
   text-align: center;
 }
 
-.App-intro {
+.App-header {
   font-size: large;
+  position: fixed;
+  background-color: white;
 }

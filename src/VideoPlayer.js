@@ -30,7 +30,7 @@ class VideoPlayer extends React.Component {
     })
     this.state.player.playVideo()
     this.state.player.removeEventListener('click', 'pause')
-    this.state.player.seekTo(this.props.seekTime, true)
+    this.state.player.seekTo(this.props.startTime, true)
     this.state.player.mute()
   }
 
@@ -54,7 +54,7 @@ class VideoPlayer extends React.Component {
         theme: 'dark',
         fs: 0,
         rel: 0,
-        controls: 0,
+        controls: 1,
         modestbranding: 1,
         autohide: 1,
         showinfo: 0,
