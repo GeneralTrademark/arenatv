@@ -115,7 +115,10 @@ class Client extends React.Component {
   incrementVideoIndex = (index) => {
     console.log('trying to increase from ' + index)
     if (index === this.state.currentVideoIndex) {
-      console.log('trying to write' + index)
+      let newIndex = index
+      if (index > this.currentChannel.videos.length) {
+        newIndex = 0
+      }
       base.update(`${this.state.currentChannel}`, {
         data: { currentVideoIndex: this.state.currentVideoIndex+1},
       })
