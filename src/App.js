@@ -9,24 +9,26 @@ class App extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      playlistChannelSlug: 'arena-tv',
-      currentChannel: 'arena-tv',
-      currentVideoId: 'iYJKd0rkKss',
+      // playlistChannelSlug: 'arena-tv',
+      currentChannel: 'talks-lectures-mostly-design',
+      // currentVideoId: 'iYJKd0rkKss',
       channels: [],
       numUsers: 0,
     }
   }
 
   componentWillMount = () => {
+    this.getChannels()
     // if channels changes, get all videos again
-    base.listenTo('channels', {
-      context: this,
-      asArray: true,
-      then(channels){
-        this.getChannels()
-      },
-    })
+    // base.listenTo('channels', {
+    //   context: this,
+    //   asArray: true,
+    //   then(channels){
+    //     this.getChannels()
+    //   },
+    // })
   }
+
 
   classifyItem = (item) => {
     const isAttachment = item.class === 'Attachment'
@@ -58,6 +60,9 @@ class App extends Component {
           videos: [],
           health: 0,
           username: channel.user.username,
+          currentVideoIndex: 0,
+          time: 0,
+          users:{},
         }
         return channelObject
       })
@@ -115,7 +120,7 @@ class App extends Component {
     return (
       <div className="App">
         <div className="App-header">
-          <h2>Welcome to arenatv </h2>
+          <h2>Welcome to arenatv - you are watching {this.state.currentChannel}</h2>
           <p>{this.state.numUsers-1} other {maybePluralize(this.state.numUsers-1, 'being')} {isare(this.state.numUsers-1, 'are')} watching with you.</p>
           <ul>
             <li>coming soon:</li>
@@ -125,7 +130,11 @@ class App extends Component {
             <li>vote to skip</li>
           </ul>
         </div>
-        <Client selectedChannel={this.state.currentChannel} handleChangeUsers={this.handleChangeUsers} />
+        <Client
+          currentChannel={this.state.currentChannel}
+          handleChangeUsers={this.handleChangeUsers}
+          // handleChangeChannel={this.handleChangeChannel}
+        />
         <ChannelList
           handleChangeChannel={this.handleChangeChannel}
           channels={this.state.channels}
