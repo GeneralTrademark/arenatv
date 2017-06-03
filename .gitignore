@@ -20,4 +20,6 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
-*/arenatv_secrets
+/env-config.js
+.env*.local
+.env

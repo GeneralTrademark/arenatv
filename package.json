@@ -12,7 +12,6 @@
   },
   "dependencies": {
     "firebase": "^4.1.0",
-    "lodash": "^4.17.4",
     "re-base": "^3.0.1",
     "react": "^15.5.4",
     "react-dom": "^15.5.4",

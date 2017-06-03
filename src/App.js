@@ -1,5 +1,4 @@
 import React, { Component } from 'react'
-import base from './helpers/base'
 import './App.css'
 import Client from './Client'
 import ChannelList from './ChannelList'
@@ -9,10 +8,11 @@ class App extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      playlistChannelSlug: 'arenatv',
+      playlistChannelSlug: 'arena-tv',
       currentChannel: 'arena-tv',
       currentVideoId: 'iYJKd0rkKss',
       channels: [],
+      numUsers: 0,
     }
   }
 
@@ -83,7 +83,6 @@ class App extends Component {
       let youtubeSlugs = youtubeVids.map((video) => {
         return this.getYoutubeId(video.source.url)
       })
-      console.log(youtubeVids)
       base.update(`channels/${targetSlug}`, {
         data: {videos : youtubeSlugs},
       })
@@ -100,13 +99,25 @@ class App extends Component {
     this.getVids(target)
   }
 
+  handleChangeUsers = (num) =>{
+    this.setState({
+      numUsers: num,
+    })
+  }
+
   render() {
+    const maybePluralize = (count, noun, suffix = 's') =>
+      `${noun}${count !== 1 ? suffix : ''}`
+    const isare = (count, noun, suffix = 'is') =>
+      `${count !== 1 ? noun : suffix}`
+
     return (
       <div className="App">
         <div className="App-header">
-          <h2>Welcome to arenatv</h2>
+          <h2>Welcome to arenatv </h2>
+          <p>{this.state.numUsers-1} other {maybePluralize(this.state.numUsers-1, 'being')} {isare(this.state.numUsers-1, 'are')} here with you</p>
         </div>
-        <Client channelSlug={this.state.playlistChannelSlug} />
+        <Client selectedChannel={this.state.currentChannel} handleChangeUsers={this.handleChangeUsers} />
         <ChannelList
           handleChangeChannel={this.handleChangeChannel}
           channels={this.state.channels}
