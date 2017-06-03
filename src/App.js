@@ -116,7 +116,14 @@ class App extends Component {
       <div className="App">
         <div className="App-header">
           <h2>Welcome to arenatv </h2>
-          <p>{this.state.numUsers-1} other {maybePluralize(this.state.numUsers-1, 'being')} {isare(this.state.numUsers-1, 'are')} here with you</p>
+          <p>{this.state.numUsers-1} other {maybePluralize(this.state.numUsers-1, 'being')} {isare(this.state.numUsers-1, 'are')} watching with you.</p>
+          <ul>
+            <li>coming soon:</li>
+            <li>generate live channel from are.na url</li>
+            <li>draw + interact over videos with other concurrent users</li>
+            <li>find other active are.na.tv channels</li>
+            <li>vote to skip</li>
+          </ul>
         </div>
         <Client selectedChannel={this.state.currentChannel} handleChangeUsers={this.handleChangeUsers} />
         <ChannelList
