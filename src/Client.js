@@ -10,6 +10,7 @@ class Client extends React.Component {
       currentVideoId: "",
       currentVideoIndex: 0,
       channelState: {},
+      currentVideosArray: [],
       loaded: false,
       users: {},
       userKey: null,
@@ -33,7 +34,6 @@ class Client extends React.Component {
           currentVideoIndex: data.currentVideoIndex,
           currentVideoId: data.videos[data.currentVideoIndex],
         })
-        console.log(data.videos[data.currentVideoIndex])
       },
     })
     this.addUser()
@@ -52,8 +52,6 @@ class Client extends React.Component {
     this.state.player.playVideo()
     this.state.player.seekTo(this.state.channelState.time, true)
     // this.state.player.setVolume(50)
-    // this.state.player.unMute()
-    // this.state.player.mute()
 
     // Update the the user on firebase with the current video time
     base.update(`${this.state.currentChannel}/users/${this.state.userKey}`, {
@@ -94,7 +92,6 @@ class Client extends React.Component {
   }
 
   onEnd = (event) => {
-    console.log('end of video')
     base.fetch(`${this.state.currentChannel}/currentVideoIndex`, {
       context: this,
       asArray: false,
@@ -105,7 +102,6 @@ class Client extends React.Component {
   }
 
   skipToNext = (index) => {
-    console.log('trying to skip to next')
     this.setState({
       currentVideoIndex: index,
       currentVideoId: this.state.channelState.videos[index],
@@ -116,25 +112,23 @@ class Client extends React.Component {
   }
 
   incrementVideoIndex = (index) => {
-    console.log('trying to increase from ' + index)
     if (index === this.state.currentVideoIndex) {
       let newIndex = index
-      console.log(this.state.channelState.videos.length)
-      if (index > this.state.channelState.videos.length) {
-        newIndex = 0
+      if (index >= (this.state.channelState.videos.length - 1)) {
+        newIndex = -1
       }
       base.update(`${this.state.currentChannel}`, {
-        data: { currentVideoIndex: this.state.currentVideoIndex+1},
+        data: { currentVideoIndex: newIndex+1},
       })
-      this.skipToNext(index+1)
+      this.skipToNext(newIndex+1)
     }
   }
 
   onMuteVideo = () => {
     console.log('hello??')
-    const muted = this.state.muted ? this.state.player.unMute() : this.state.player.mute()
+    this.state.muted ? this.state.player.unMute() : this.state.player.mute()
     this.setState({
-      muted: !muted,
+      muted: !this.state.muted,
     })
   }
 
@@ -152,7 +146,6 @@ class Client extends React.Component {
     if ((time + 5) > Math.round(this.state.player.getCurrentTime())) {
       this.state.player.playVideo()
       this.state.player.seekTo(time, true)
-      this.state.player.mute()
     }
   }
 
