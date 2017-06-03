@@ -20,7 +20,7 @@ class Client extends React.Component {
     // Then make a new user in the channel
     // When loaded, the react-youtube will make a video w/the channel's current youtube url and time
     // See onReady for next steps
-    base.listenTo('arenatv', {
+    base.listenTo('arena-tv', {
       context: this,
       asArray: false,
       then(data) {

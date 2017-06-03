@@ -11,7 +11,7 @@ function ChannelList(props) {
           {'/'}
         </div>
         <div className={'listContents'}>
-          {channel.user.username}
+          {channel.username}
         </div>
       </li>
     )
