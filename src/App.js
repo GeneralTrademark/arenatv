@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import './App.css'
+import base from './helpers/base'
 import Client from './Client'
 import ChannelList from './ChannelList'
 import config from './config'
