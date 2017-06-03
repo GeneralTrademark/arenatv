@@ -6,7 +6,7 @@ class Client extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
-      currentChannel: this.props.selectedChannel,
+      currentChannel: this.props.currentChannel,
       currentVideoId: "",
       currentVideoIndex: 0,
       channelState: {},
@@ -24,15 +24,15 @@ class Client extends React.Component {
     // Then make a new user in the channel
     // When loaded, the react-youtube will make a video w/the channel's current youtube url and time
     // See onReady for next steps
-    base.listenTo(`${this.state.currentChannel}`, {
+    base.listenTo(`channels/${this.state.currentChannel}`, {
       context: this,
       asArray: false,
       then(data) {
         this.setState({
           loaded: true,
           channelState: data,
-          currentVideoIndex: data.currentVideoIndex,
-          currentVideoId: data.videos[data.currentVideoIndex],
+          currentVideoIndex: data.channel.currentVideoIndex,
+          currentVideoId: data.videos[data.channel.currentVideoIndex],
         })
       },
     })
@@ -43,6 +43,18 @@ class Client extends React.Component {
     base.removeBinding(this.ref)
   }
 
+  // componentWillReceiveProps(nextProps) {
+  //   if (nextProps.currentChannel !== this.state.currentChannel) {
+  //     this.changeChannel(nextProps.currentChannel)
+  //   }
+  // }
+  //
+  // changeChannel = (slug) =>{
+  //   this.setState({
+  //     currentChannel: slug,
+  //   })
+  // }
+
   onReady = (event) => {
     // When the youtube video is loaded - set up listeners and play the video
     this.setState({
@@ -50,16 +62,16 @@ class Client extends React.Component {
     })
 
     this.state.player.playVideo()
-    this.state.player.seekTo(this.state.channelState.time, true)
+    this.state.player.seekTo(this.state.channelState.channel.time, true)
     // this.state.player.setVolume(50)
 
     // Update the the user on firebase with the current video time
-    base.update(`${this.state.currentChannel}/users/${this.state.userKey}`, {
-      data: { time: this.state.channelState.time },
+    base.update(`channels/${this.state.currentChannel}/users/${this.state.userKey}`, {
+      data: { time: this.state.channelState.channel.time },
     })
 
     // If there are changes in users
-    base.listenTo(`${this.state.currentChannel}/users`, {
+    base.listenTo(`channels/${this.state.currentChannel}/users`, {
       context: this,
       asArray: true,
       then(users) {
@@ -70,7 +82,7 @@ class Client extends React.Component {
     })
 
     // If there are changes to the channel's state
-    base.listenTo(`${this.state.currentChannel}/time`, {
+    base.listenTo(`channels/${this.state.currentChannel}/channel/time`, {
       context: this,
       asArray: false,
       then(time) {
@@ -79,7 +91,7 @@ class Client extends React.Component {
       },
     })
 
-    base.listenTo(`${this.state.currentChannel}/currentVideoIndex`, {
+    base.listenTo(`channels/${this.state.currentChannel}/channel/currentVideoIndex`, {
       context: this,
       asArray: false,
       then(index) {
@@ -92,7 +104,7 @@ class Client extends React.Component {
   }
 
   onEnd = (event) => {
-    base.fetch(`${this.state.currentChannel}/currentVideoIndex`, {
+    base.fetch(`channels/${this.state.currentChannel}/channel/currentVideoIndex`, {
       context: this,
       asArray: false,
       then(index) {
@@ -135,7 +147,7 @@ class Client extends React.Component {
   setTimestamp = (timeStamp) => {
     // Only set the channel state if you are ahead of everyone else
     if (timeStamp < Math.round(this.state.player.getCurrentTime())) {
-      base.update(`${this.state.currentChannel}`, {
+      base.update(`channels/${this.state.currentChannel}`, {
         data: { time: Math.round(this.state.player.getCurrentTime()) },
       })
     }
@@ -153,7 +165,7 @@ class Client extends React.Component {
     // If your video is actually playing update your user timeStamp with the currentTime
     if (this.state.player.getPlayerState() === 1) {
       const that = this
-      base.update(`${this.state.currentChannel}/users/${this.state.userKey}`, {
+      base.update(`channels/${this.state.currentChannel}/users/${this.state.userKey}`, {
         data: { time: Math.round(this.state.player.getCurrentTime()) },
         then() {
           const timeStamps = []
@@ -174,7 +186,7 @@ class Client extends React.Component {
 
   addUser = () => {
     // Add user and set listener for onDisconnect
-    const ref = base.push(`${this.state.currentChannel}/users`, {
+    const ref = base.push(`channels/${this.state.currentChannel}/users`, {
       data: { time: 0 },
     })
     ref.onDisconnect().remove()
