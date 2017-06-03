@@ -51,7 +51,9 @@ class Client extends React.Component {
 
     this.state.player.playVideo()
     this.state.player.seekTo(this.state.channelState.time, true)
-    this.state.player.mute()
+    // this.state.player.setVolume(50)
+    // this.state.player.unMute()
+    // this.state.player.mute()
 
     // Update the the user on firebase with the current video time
     base.update(`${this.state.currentChannel}/users/${this.state.userKey}`, {
@@ -64,6 +66,7 @@ class Client extends React.Component {
       asArray: true,
       then(users) {
         // Check everyone's timeStamp
+        this.props.handleChangeUsers(users.length)
         this.checkTimestamps(users)
       },
     })
@@ -116,7 +119,8 @@ class Client extends React.Component {
     console.log('trying to increase from ' + index)
     if (index === this.state.currentVideoIndex) {
       let newIndex = index
-      if (index > this.currentChannel.videos.length) {
+      console.log(this.state.channelState.videos.length)
+      if (index > this.state.channelState.videos.length) {
         newIndex = 0
       }
       base.update(`${this.state.currentChannel}`, {
@@ -127,6 +131,7 @@ class Client extends React.Component {
   }
 
   onMuteVideo = () => {
+    console.log('hello??')
     const muted = this.state.muted ? this.state.player.unMute() : this.state.player.mute()
     this.setState({
       muted: !muted,
