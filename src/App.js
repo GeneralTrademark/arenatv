@@ -18,14 +18,7 @@ class App extends Component {
   }
 
   componentWillMount = () => {
-    // if channels changes, get all videos again
-    base.listenTo('channels', {
-      context: this,
-      asArray: true,
-      then(channels){
-        this.getChannels()
-      },
-    })
+    this.getChannels()
   }
 
   classifyItem = (item) => {
@@ -48,13 +41,13 @@ class App extends Component {
   // make a list of channels and their videos
   getChannels = () => {
     let component = this
-    // get channels from Are.na
     const getChannels = fetch(`${config.apiBase}/channels/arenatv`)
     getChannels.then(resp => resp.json()).then(channels => {
       let channelArr = channels.contents
       channelArr = channelArr.map((channel) => {
         let channelObject = {
           slug: channel.slug,
+          title: channel.title,
           videos: [],
           health: 0,
           username: channel.user.username,
@@ -114,23 +107,17 @@ class App extends Component {
 
     return (
       <div className="App">
-        <div className="App-header">
-          <h2>Welcome to arenatv </h2>
-          <p>{this.state.numUsers-1} other {maybePluralize(this.state.numUsers-1, 'being')} {isare(this.state.numUsers-1, 'are')} watching with you.</p>
-          <ul>
-            <li>coming soon:</li>
-            <li>generate live channel from are.na url</li>
-            <li>draw + interact over videos with other concurrent users</li>
-            <li>find other active are.na.tv channels</li>
-            <li>vote to skip</li>
-          </ul>
+        <div className="controlContainer">
+          <Client
+            selectedChannel={this.state.currentChannel}
+            handleChangeUsers={this.handleChangeUsers}
+            trayOpen={this.state.trayOpen}
+          />
         </div>
-        <Client selectedChannel={this.state.currentChannel} handleChangeUsers={this.handleChangeUsers} />
         <ChannelList
           handleChangeChannel={this.handleChangeChannel}
           channels={this.state.channels}
         />
-      }
       </div>
     )
   }
