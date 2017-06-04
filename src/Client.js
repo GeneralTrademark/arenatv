@@ -15,7 +15,7 @@ class Client extends React.Component {
       users: {},
       userKey: null,
       player: null,
-      muted: false,
+      skipVotes: 0,
     }
   }
 
@@ -44,17 +44,24 @@ class Client extends React.Component {
     this.addUser(this.props.currentChannel)
   }
 
-  // componentWillUnmount() {
-  //   base.removeBinding(this.ref)
-  // }
-
-  componentWillReceiveProps(nextProps) {
+  componentWillReceiveProps = (nextProps) => {
+    if (this.state.player !== null) {
+      this.props.muted ? this.state.player.unMute() : this.state.player.mute()
+    }
     if (this.state.loaded === true && nextProps.currentChannel !== this.state.currentChannel) {
       this.changeChannel(nextProps.currentChannel)
     }
   }
 
-  changeChannel = (slug) =>{
+  componentWillUnmount() {
+    base.removeBinding(this.ref)
+  }
+
+  // componentWillUnmount() {
+  //   base.removeBinding(this.ref)
+  // }
+
+  changeChannel = (slug) => {
     // this.removeUser()
     // this.setState({
     //   currentChannel: slug,
@@ -75,6 +82,15 @@ class Client extends React.Component {
   }
 
   setListeners = () => {
+    this.state.player.playVideo()
+    this.state.player.seekTo(this.state.channelState.time, true)
+    // this.state.player.setVolume(50)
+
+    // set event listener for youtube player state change
+    this.state.player.addEventListener('onStateChange', (event) => {
+      this.props.getVideoStatus(event.data)
+    })
+
     // Update the the user on firebase with the current video time
     base.update(`channels/${this.state.currentChannel}/users/${this.state.userKey}`, {
       data: { time: this.state.channelState.time },
@@ -219,7 +235,10 @@ class Client extends React.Component {
     this.setState({ userKey: generatedKey })
   }
 
+
+
   render() {
+
     const opts = {
       height: window.innerHeight,
       width: window.innerWidth,
@@ -236,7 +255,7 @@ class Client extends React.Component {
     }
     return (
       this.state.loaded
-      ? <div>
+      ? <div className='videoWrapper'>
         <YouTube
           videoId={this.state.currentVideoId}
           onReady={this.onReady}
@@ -245,7 +264,6 @@ class Client extends React.Component {
           opts={opts}
           className="video"
         />
-        <button className="button" onClick={this.onMuteVideo}>Mute</button>
       </div>
       : <div> {'Not loaded'}</div>
     )

@@ -11,9 +11,13 @@ class App extends Component {
     this.state = {
       // playlistChannelSlug: 'arena-tv',
       currentChannel: "video-1476643406",
+      currentVideoName: '',
       // currentVideoId: 'iYJKd0rkKss',
       channels: [],
       numUsers: 0,
+      muted: false,
+      currentVideoStatus: -1,
+      trayOpen: false,
     }
   }
 
@@ -51,13 +55,13 @@ class App extends Component {
   // make a list of channels and their videos
   getChannels = () => {
     let component = this
-    // get channels from Are.na
     const getChannels = fetch(`${config.apiBase}/channels/arenatv`)
     getChannels.then(resp => resp.json()).then(channels => {
       let channelArr = channels.contents
       channelArr = channelArr.map((channel) => {
         let channelObject = {
           slug: channel.slug,
+          title: channel.title,
           videos: [],
           health: 0,
           username: channel.user.username,
@@ -99,9 +103,6 @@ class App extends Component {
         data: {videos : youtubeSlugs},
       })
     })
-
-
-    // return response.json()
   }
 
   handleChangeChannel = (target) => {
@@ -117,6 +118,71 @@ class App extends Component {
     })
   }
 
+  onMuteVideo = () => {
+    this.setState({
+      muted: !this.state.muted,
+    })
+  }
+
+  getVideoStatus = (status) => {
+    this.setState({
+      currentVideoStatus: status,
+    })
+  }
+
+  getCurrentVideoName = (name) => {
+    this.setState({
+      currentVideoName: name,
+    })
+  }
+
+  indicateStatus = () => {
+    let status
+    switch(this.state.currentVideoStatus) {
+    case -1:
+        status = 'unstarted'
+        break
+    case 0:
+        status = 'ended'
+        break
+    case 1:
+        status = 'playing'
+        break
+    case 2:
+        status = 'paused'
+        break
+    case 3:
+        status = 'buffering'
+        break
+    case 5:
+        status = 'cued'
+        break
+    default:
+        status = 'error'
+    }
+  return (`${status} indicator`)
+  }
+
+  toggleTrayState = () => {
+    const trayOpen = this.state.trayOpen
+    this.setState({
+      trayOpen: !trayOpen,
+    })
+  }
+
+
+  setTrayClass = () => {
+    const trayOpen = this.state.trayOpen
+    let classToSet
+    if (trayOpen) {
+      classToSet = 'open'
+    } else {
+      classToSet = 'closed'
+    }
+    return classToSet
+  }
+
+
   render() {
     const maybePluralize = (count, noun, suffix = 's') =>
       `${noun}${count !== 1 ? suffix : ''}`
@@ -125,26 +191,44 @@ class App extends Component {
 
     return (
       <div className="App">
-        <div className="App-header">
-          <h2>Welcome to arenatv - you are watching {this.state.currentChannel}</h2>
-          <p>{this.state.numUsers-1} other {maybePluralize(this.state.numUsers-1, 'being')} {isare(this.state.numUsers-1, 'are')} watching with you.</p>
-          <ul>
-            <li>coming soon:</li>
-            <li>generate live channel from are.na url</li>
-            <li>draw + interact over videos with other concurrent users</li>
-            <li>find other active are.na.tv channels</li>
-            <li>vote to skip</li>
-          </ul>
+        <div className={'videoFrame'}>
+          <div className="overlayContainer">
+            <div className="overlay">
+              <header>
+                <div className={'mark'} />
+                <button onClick={() => this.toggleTrayState()}>{'.tv'}</button>
+              </header>
+              <footer>
+              <div className={'info'}>
+                <div className={this.indicateStatus()} />
+                <div className={'spacer'} />
+                <h2>{this.state.currentChannel}</h2>
+                <div className={'spacer'} />
+                <p>{this.state.currentVideoName}</p>
+                <div className={'spacer'} />
+                <p>{this.state.numUsers-1} {maybePluralize(this.state.numUsers-1, 'other')} {isare(this.state.numUsers-1, 'are')} watching with you.</p>
+
+              </div>
+              <button className="button" onClick={() => this.onMuteVideo()}>Mute</button>
+              </footer>
+            </div>
+              <Client
+                currentChannel={this.state.currentChannel}
+                handleChangeUsers={this.handleChangeUsers}
+                trayOpen={this.state.trayOpen}
+                muted={this.state.muted}
+                getVideoStatus={this.getVideoStatus}
+                getCurrentVideoName={this.getCurrentVideoName}
+              />
+          </div>
         </div>
-        <Client
-          currentChannel={this.state.currentChannel}
-          handleChangeUsers={this.handleChangeUsers}
-        />
-        <ChannelList
-          handleChangeChannel={this.handleChangeChannel}
-          channels={this.state.channels}
-        />
+        <div className={this.setTrayClass()}>
+          <ChannelList
+            handleChangeChannel={this.handleChangeChannel}
+            channels={this.state.channels}
+          />
         </div>
+      </div>
     )
   }
 }

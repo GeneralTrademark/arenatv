@@ -1,0 +1,30 @@
+.App {
+  text-align: center;
+}
+
+.App-header {
+  font-size: small;
+  position: fixed;
+  background-color: rgba(0,0,0,1);
+  color: white;
+  /*width: 100%;*/
+  /*border: 1px solid #1f1f1f;*/
+  box-shadow: 0px 10px 74px -20px rgba(0,0,0,0.4);
+  /*width: 50%;*/
+  text-align: left;
+  padding: 1rem;
+  /*margin: .5rem;*/
+}
+
+.App-header ul{
+  padding-left: 15px;
+}
+
+.App-header ul li{
+  list-style: armenian;
+}
+
+.video{
+  width: 100vw;
+  height: 100vh;
+}

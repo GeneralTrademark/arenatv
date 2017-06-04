@@ -6,10 +6,33 @@ body, html {
   margin: 0;
   padding: 0;
   font-family: sans-serif;
+  background: black;
+  overflow: hidden;
+  color: white;
 }
 
 iframe{
   pointer-events: none;
+}
+
+h1{
+
+}
+
+h2{
+  font-size: 14px;
+  font-family: helvetica;
+  font-weight: 600;
+}
+
+h3{
+
+}
+
+p{
+  font-size: 14px;
+  font-family: helvetica;
+  font-weight: 500;
 }
 
 .channelListItem{
