@@ -15,7 +15,7 @@ class Client extends React.Component {
       users: {},
       userKey: null,
       player: null,
-      muted: false,
+      skipVotes: 0,
     }
   }
 
@@ -37,6 +37,12 @@ class Client extends React.Component {
       },
     })
     this.addUser()
+  }
+
+  componentWillReceiveProps = () => {
+    if (this.state.player !== null) {
+      this.props.muted ? this.state.player.unMute() : this.state.player.mute()
+    }
   }
 
   componentWillUnmount() {
@@ -61,9 +67,16 @@ class Client extends React.Component {
       player: event.target,
     })
 
+
     this.state.player.playVideo()
     this.state.player.seekTo(this.state.channelState.channel.time, true)
     // this.state.player.setVolume(50)
+
+    // set event listener for youtube player state change
+    this.state.player.addEventListener('onStateChange', (event) => {
+      this.props.getVideoStatus(event.data)
+    })
+
 
     // Update the the user on firebase with the current video time
     base.update(`channels/${this.state.currentChannel}/users/${this.state.userKey}`, {
@@ -136,14 +149,6 @@ class Client extends React.Component {
     }
   }
 
-  onMuteVideo = () => {
-    console.log('hello??')
-    this.state.muted ? this.state.player.unMute() : this.state.player.mute()
-    this.setState({
-      muted: !this.state.muted,
-    })
-  }
-
   setTimestamp = (timeStamp) => {
     // Only set the channel state if you are ahead of everyone else
     if (timeStamp < Math.round(this.state.player.getCurrentTime())) {
@@ -194,7 +199,10 @@ class Client extends React.Component {
     this.setState({ userKey: generatedKey })
   }
 
+
+
   render() {
+
     const opts = {
       height: window.innerHeight,
       width: window.innerWidth,
@@ -211,7 +219,7 @@ class Client extends React.Component {
     }
     return (
       this.state.loaded
-      ? <div>
+      ? <div className='videoWrapper'>
         <YouTube
           videoId={this.state.currentVideoId}
           onReady={this.onReady}
@@ -219,7 +227,6 @@ class Client extends React.Component {
           opts={opts}
           className="video"
         />
-        <button className="button" onClick={this.onMuteVideo}>Mute</button>
       </div>
       : <div> {'Not loaded'}</div>
     )

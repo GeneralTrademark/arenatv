@@ -1,5 +1,12 @@
 .App {
   text-align: center;
+  overflow: hidden;
+  display: flex;
+}
+
+.videoFrame{
+  position: relative;
+  width: 100%;
 }
 
 .App-header {
@@ -25,6 +32,114 @@
 }
 
 .video{
-  width: 100vw;
+  width: 100%;
+  height: 100%;
+  padding-top: 40px;
+  padding-bottom: 40px;
+}
+
+.overlay{
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: space-between;
+  flex-direction: column;
+}
+
+header{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.mark{
+  background-image: url('./icons/arenamark.svg');
+  background-size: 26px 26px;
+  background-repeat: no-repeat;
+  height: 26px;
+  width: 26px;
+}
+
+footer{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.info{
+  display: flex;
+  align-items: baseline;
+}
+
+.spacer{
+  width: 1em;
+}
+
+.indicator{
+  width: 24px;
+  height: 12px;
+  border-radius: 10px;
+  display: block;
+  border-radius: 24px / 12px;
+  transition: background-color .5s;
+}
+
+.unstarted{
+  background-color: #C8B4E3;
+}
+
+.buffering{
+  background-color: #C8B4E3;
+}
+
+.playing{
+  background-color: #17AC10;
+}
+
+.paused{
+  background-color: #FFEB63;
+}
+
+.cued{
+  background-color: #FFEB63;
+}
+
+.error{
+  background-color: #FFACAE;
+}
+
+header, footer {
+  width: 100%;
+  height: 40px;
+  padding-right: 10px;
+  padding-left: 10px;
+}
+
+.videoWrapper{
+  width: 100%;
   height: 100vh;
+}
+
+.loadingCurtain{
+  opacity: 0;
+}
+
+.tray{
+
+}
+
+.open{
+  width: 500px;
+  background-color: black;
+  transition: width 300ms;
+  overflow-x: hidden;
+}
+
+.closed{
+  width: 0;
+  background-color: black;
+  transition: width 300ms;
+  overflow-x: hidden;
+
 }

@@ -11,9 +11,13 @@ class App extends Component {
     this.state = {
       // playlistChannelSlug: 'arena-tv',
       currentChannel: 'talks-lectures-mostly-design',
+      currentVideoName: '',
       // currentVideoId: 'iYJKd0rkKss',
       channels: [],
       numUsers: 0,
+      muted: false,
+      currentVideoStatus: -1,
+      trayOpen: false,
     }
   }
 
@@ -93,9 +97,6 @@ class App extends Component {
         data: {videos : youtubeSlugs},
       })
     })
-
-
-    // return response.json()
   }
 
   handleChangeChannel = (target) => {
@@ -111,6 +112,71 @@ class App extends Component {
     })
   }
 
+  onMuteVideo = () => {
+    this.setState({
+      muted: !this.state.muted,
+    })
+  }
+
+  getVideoStatus = (status) => {
+    this.setState({
+      currentVideoStatus: status,
+    })
+  }
+
+  getCurrentVideoName = (name) => {
+    this.setState({
+      currentVideoName: name,
+    })
+  }
+
+  indicateStatus = () => {
+    let status
+    switch(this.state.currentVideoStatus) {
+    case -1:
+        status = 'unstarted'
+        break
+    case 0:
+        status = 'ended'
+        break
+    case 1:
+        status = 'playing'
+        break
+    case 2:
+        status = 'paused'
+        break
+    case 3:
+        status = 'buffering'
+        break
+    case 5:
+        status = 'cued'
+        break
+    default:
+        status = 'error'
+    }
+  return (`${status} indicator`)
+  }
+
+  toggleTrayState = () => {
+    const trayOpen = this.state.trayOpen
+    this.setState({
+      trayOpen: !trayOpen,
+    })
+  }
+
+
+  setTrayClass = () => {
+    const trayOpen = this.state.trayOpen
+    let classToSet
+    if (trayOpen) {
+      classToSet = 'open'
+    } else {
+      classToSet = 'closed'
+    }
+    return classToSet
+  }
+
+
   render() {
     const maybePluralize = (count, noun, suffix = 's') =>
       `${noun}${count !== 1 ? suffix : ''}`
@@ -119,18 +185,44 @@ class App extends Component {
 
     return (
       <div className="App">
-        <div className="controlContainer">
-          <Client
-            selectedChannel={this.state.currentChannel}
-            handleChangeUsers={this.handleChangeUsers}
-            trayOpen={this.state.trayOpen}
+        <div className={'videoFrame'}>
+          <div className="overlayContainer">
+            <div className="overlay">
+              <header>
+                <div className={'mark'} />
+                <button onClick={() => this.toggleTrayState()}>{'.tv'}</button>
+              </header>
+              <footer>
+              <div className={'info'}>
+                <div className={this.indicateStatus()} />
+                <div className={'spacer'} />
+                <h2>{this.state.currentChannel}</h2>
+                <div className={'spacer'} />
+                <p>{this.state.currentVideoName}</p>
+                <div className={'spacer'} />
+                <p>{this.state.numUsers-1} {maybePluralize(this.state.numUsers-1, 'other')} {isare(this.state.numUsers-1, 'are')} watching with you.</p>
+
+              </div>
+              <button className="button" onClick={() => this.onMuteVideo()}>Mute</button>
+              </footer>
+            </div>
+              <Client
+                currentChannel={this.state.currentChannel}
+                handleChangeUsers={this.handleChangeUsers}
+                trayOpen={this.state.trayOpen}
+                muted={this.state.muted}
+                getVideoStatus={this.getVideoStatus}
+                getCurrentVideoName={this.getCurrentVideoName}
+              />
+          </div>
+        </div>
+        <div className={this.setTrayClass()}>
+          <ChannelList
+            handleChangeChannel={this.handleChangeChannel}
+            channels={this.state.channels}
           />
         </div>
 
-        <ChannelList
-          handleChangeChannel={this.handleChangeChannel}
-          channels={this.state.channels}
-        />
       </div>
     )
   }
