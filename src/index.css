@@ -34,13 +34,3 @@ p{
   font-family: helvetica;
   font-weight: 500;
 }
-
-.channelListItem{
-  display: flex;
-  cursor: pointer;
-  margin-top: 1rem;
-}
-
-.listContents{
-  margin-right: 1em;
-}

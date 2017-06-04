@@ -7,28 +7,7 @@
 .videoFrame{
   position: relative;
   width: 100%;
-}
-
-.App-header {
-  font-size: small;
-  position: fixed;
-  background-color: rgba(0,0,0,1);
-  color: white;
-  /*width: 100%;*/
-  /*border: 1px solid #1f1f1f;*/
-  box-shadow: 0px 10px 74px -20px rgba(0,0,0,0.4);
-  /*width: 50%;*/
-  text-align: left;
-  padding: 1rem;
-  /*margin: .5rem;*/
-}
-
-.App-header ul{
-  padding-left: 15px;
-}
-
-.App-header ul li{
-  list-style: armenian;
+  flex: 1;
 }
 
 .video{
@@ -86,7 +65,7 @@ footer{
 }
 
 .unstarted{
-  background-color: #C8B4E3;
+  background-color: #FFACAE;
 }
 
 .buffering{
@@ -126,17 +105,16 @@ header, footer {
 }
 
 .tray{
-
 }
 
-.open{
-  width: 500px;
+.trayOpen{
+  width: 340px;
   background-color: black;
   transition: width 300ms;
   overflow-x: hidden;
 }
 
-.closed{
+.trayClosed{
   width: 0;
   background-color: black;
   transition: width 300ms;

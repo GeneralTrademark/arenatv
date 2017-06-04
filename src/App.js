@@ -1,9 +1,10 @@
 import React, { Component } from 'react'
-import './App.css'
 import base from './helpers/base'
 import Client from './Client'
 import ChannelList from './ChannelList'
 import config from './config'
+import './App.css'
+
 
 class App extends Component {
   constructor(props) {
@@ -118,10 +119,12 @@ class App extends Component {
     })
   }
 
-  onMuteVideo = () => {
+  onMuteVideo = (event) => {
     this.setState({
       muted: !this.state.muted,
     })
+    event.stopPropagation()
+    event.preventDefault()
   }
 
   getVideoStatus = (status) => {
@@ -163,11 +166,13 @@ class App extends Component {
   return (`${status} indicator`)
   }
 
-  toggleTrayState = () => {
+  toggleTrayState = (event) => {
     const trayOpen = this.state.trayOpen
     this.setState({
       trayOpen: !trayOpen,
     })
+    event.stopPropagation()
+    event.preventDefault()
   }
 
 
@@ -175,15 +180,16 @@ class App extends Component {
     const trayOpen = this.state.trayOpen
     let classToSet
     if (trayOpen) {
-      classToSet = 'open'
+      classToSet = 'trayOpen'
     } else {
-      classToSet = 'closed'
+      classToSet = 'trayClosed'
     }
     return classToSet
   }
 
 
   render() {
+    console.log(this.state.currentVideoStatus)
     const maybePluralize = (count, noun, suffix = 's') =>
       `${noun}${count !== 1 ? suffix : ''}`
     const isare = (count, noun, suffix = 'is') =>
@@ -196,7 +202,7 @@ class App extends Component {
             <div className="overlay">
               <header>
                 <div className={'mark'} />
-                <button onClick={() => this.toggleTrayState()}>{'.tv'}</button>
+                <button onClick={(e) => this.toggleTrayState(e)}>{'.tv'}</button>
               </header>
               <footer>
               <div className={'info'}>
@@ -209,7 +215,7 @@ class App extends Component {
                 <p>{this.state.numUsers-1} {maybePluralize(this.state.numUsers-1, 'other')} {isare(this.state.numUsers-1, 'are')} watching with you.</p>
 
               </div>
-              <button className="button" onClick={() => this.onMuteVideo()}>Mute</button>
+              <button className="button" onClick={(e) => this.onMuteVideo(e)}>Mute</button>
               </footer>
             </div>
               <Client

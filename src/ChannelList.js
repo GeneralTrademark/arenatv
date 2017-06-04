@@ -1,4 +1,5 @@
 import React from 'react'
+import './ChannelList.css'
 
 function ChannelList(props) {
   function getChannels() {
@@ -19,7 +20,7 @@ function ChannelList(props) {
   }
 
   return (
-    <div>
+    <div className={'trayContents'}>
       {'channels'}
       <ul>
         {getChannels()}
