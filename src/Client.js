@@ -16,6 +16,7 @@ class Client extends React.Component {
       userKey: null,
       player: null,
       skipVotes: 0,
+      // muted: false,
     }
   }
 
@@ -57,10 +58,6 @@ class Client extends React.Component {
     base.removeBinding(this.ref)
   }
 
-  // componentWillUnmount() {
-  //   base.removeBinding(this.ref)
-  // }
-
   changeChannel = (slug) => {
     // this.removeUser()
     // this.setState({
@@ -84,7 +81,7 @@ class Client extends React.Component {
   setListeners = () => {
     this.state.player.playVideo()
     this.state.player.seekTo(this.state.channelState.time, true)
-    // this.state.player.setVolume(50)
+    this.state.player.setVolume(50)
 
     // set event listener for youtube player state change
     this.state.player.addEventListener('onStateChange', (event) => {
@@ -172,13 +169,6 @@ class Client extends React.Component {
       })
       this.skipToNext(newIndex+1)
     }
-  }
-
-  onMuteVideo = () => {
-    this.state.muted ? this.state.player.unMute() : this.state.player.mute()
-    this.setState({
-      muted: !this.state.muted,
-    })
   }
 
   setTimestamp = (timeStamp) => {
