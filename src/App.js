@@ -10,7 +10,7 @@ class App extends Component {
     super(props)
     this.state = {
       // playlistChannelSlug: 'arena-tv',
-      currentChannel: 'talks-lectures-mostly-design',
+      currentChannel: "video-1476643406",
       // currentVideoId: 'iYJKd0rkKss',
       channels: [],
       numUsers: 0,
@@ -19,6 +19,7 @@ class App extends Component {
 
   componentWillMount = () => {
     this.getChannels()
+    // this.getVids('arena-tv')
     // if channels changes, get all videos again
     // base.listenTo('channels', {
     //   context: this,
@@ -62,14 +63,19 @@ class App extends Component {
           username: channel.user.username,
           currentVideoIndex: 0,
           time: 0,
-          users:{},
         }
         return channelObject
       })
       component.setState({channels: channelArr})
       channelArr.map((channel) => {
         base.update(`channels/${channel.slug}`, {
-          data: {channel},
+          data: {
+            slug: channel.slug,
+            health: 0,
+            // username: channel.user.username,
+            // currentVideoIndex: 0,
+            // time: 0,
+          },
         })
       })
     })
@@ -133,14 +139,12 @@ class App extends Component {
         <Client
           currentChannel={this.state.currentChannel}
           handleChangeUsers={this.handleChangeUsers}
-          // handleChangeChannel={this.handleChangeChannel}
         />
         <ChannelList
           handleChangeChannel={this.handleChangeChannel}
           channels={this.state.channels}
         />
-      }
-      </div>
+        </div>
     )
   }
 }

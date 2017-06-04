@@ -6,7 +6,7 @@ class Client extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
-      currentChannel: this.props.currentChannel,
+      currentChannel: '',
       currentVideoId: "",
       currentVideoIndex: 0,
       channelState: {},
@@ -19,55 +19,65 @@ class Client extends React.Component {
     }
   }
 
-  componentWillMount() {
-    // Get channel state and update internal state with the data
-    // Then make a new user in the channel
-    // When loaded, the react-youtube will make a video w/the channel's current youtube url and time
-    // See onReady for next steps
-    base.listenTo(`channels/${this.state.currentChannel}`, {
+  syncChannel = (slug) => {
+    base.fetch(`channels/${slug}`, {
       context: this,
       asArray: false,
       then(data) {
         this.setState({
           loaded: true,
           channelState: data,
-          currentVideoIndex: data.channel.currentVideoIndex,
-          currentVideoId: data.videos[data.channel.currentVideoIndex],
+          currentChannel: slug,
+          currentVideoIndex: data.currentVideoIndex,
+          currentVideoId: data.videos[data.currentVideoIndex],
         })
       },
     })
-    this.addUser()
   }
 
-  componentWillUnmount() {
-    base.removeBinding(this.ref)
+  componentWillMount() {
+    // Get channel state and update internal state with the data
+    // Then make a new user in the channel
+    // When loaded, the react-youtube will make a video w/the channel's current youtube url and time
+    // See onReady for next steps
+    this.syncChannel(this.props.currentChannel)
+    this.addUser(this.props.currentChannel)
   }
 
-  // componentWillReceiveProps(nextProps) {
-  //   if (nextProps.currentChannel !== this.state.currentChannel) {
-  //     this.changeChannel(nextProps.currentChannel)
-  //   }
-  // }
-  //
-  // changeChannel = (slug) =>{
-  //   this.setState({
-  //     currentChannel: slug,
-  //   })
+  // componentWillUnmount() {
+  //   base.removeBinding(this.ref)
   // }
 
-  onReady = (event) => {
-    // When the youtube video is loaded - set up listeners and play the video
-    this.setState({
-      player: event.target,
-    })
+  componentWillReceiveProps(nextProps) {
+    if (this.state.loaded === true && nextProps.currentChannel !== this.state.currentChannel) {
+      this.changeChannel(nextProps.currentChannel)
+    }
+  }
 
-    this.state.player.playVideo()
-    this.state.player.seekTo(this.state.channelState.channel.time, true)
-    // this.state.player.setVolume(50)
+  changeChannel = (slug) =>{
+    // this.removeUser()
+    // this.setState({
+    //   currentChannel: slug,
+    // })
+    this.setTimestamp(Math.round(this.state.player.getCurrentTime()))
+    this.removeUser(slug)
+    this.syncChannel(slug)
+    this.addUser(slug)
+  }
 
+  onStateChange = (event) => {
+    // console.log(event)
+    if (event.data === 3){
+      console.log('new video cued')
+    } else if (event.data === 1){
+      console.log('new video playing')
+    }
+  }
+
+  setListeners = () => {
     // Update the the user on firebase with the current video time
     base.update(`channels/${this.state.currentChannel}/users/${this.state.userKey}`, {
-      data: { time: this.state.channelState.channel.time },
+      data: { time: this.state.channelState.time },
     })
 
     // If there are changes in users
@@ -82,7 +92,7 @@ class Client extends React.Component {
     })
 
     // If there are changes to the channel's state
-    base.listenTo(`channels/${this.state.currentChannel}/channel/time`, {
+    base.listenTo(`channels/${this.state.currentChannel}/time`, {
       context: this,
       asArray: false,
       then(time) {
@@ -91,11 +101,10 @@ class Client extends React.Component {
       },
     })
 
-    base.listenTo(`channels/${this.state.currentChannel}/channel/currentVideoIndex`, {
+    base.listenTo(`channels/${this.state.currentChannel}/currentVideoIndex`, {
       context: this,
       asArray: false,
       then(index) {
-        console.log('hearing' + index)
         if (index > this.state.currentVideoIndex && index < this.state.currentVideoIndex + 2) {
           this.skipToNext(index)
         }
@@ -103,8 +112,21 @@ class Client extends React.Component {
     })
   }
 
+  onReady = (event) => {
+    // When the youtube video is loaded - set up listeners and play the video
+    this.setState({
+      player: event.target,
+    })
+
+    this.state.player.playVideo()
+    this.state.player.seekTo(this.state.channelState.time, true)
+    // this.state.player.setVolume(50)
+
+    this.setListeners()
+  }
+
   onEnd = (event) => {
-    base.fetch(`channels/${this.state.currentChannel}/channel/currentVideoIndex`, {
+    base.fetch(`channels/${this.state.currentChannel}/currentVideoIndex`, {
       context: this,
       asArray: false,
       then(index) {
@@ -118,7 +140,7 @@ class Client extends React.Component {
       currentVideoIndex: index,
       currentVideoId: this.state.channelState.videos[index],
     })
-    base.update(`${this.state.currentChannel}`, {
+    base.update(`channels/${this.state.currentChannel}`, {
       data: { time: 0 },
     })
   }
@@ -129,7 +151,7 @@ class Client extends React.Component {
       if (index >= (this.state.channelState.videos.length - 1)) {
         newIndex = -1
       }
-      base.update(`${this.state.currentChannel}`, {
+      base.update(`channels/${this.state.currentChannel}/`, {
         data: { currentVideoIndex: newIndex+1},
       })
       this.skipToNext(newIndex+1)
@@ -137,7 +159,6 @@ class Client extends React.Component {
   }
 
   onMuteVideo = () => {
-    console.log('hello??')
     this.state.muted ? this.state.player.unMute() : this.state.player.mute()
     this.setState({
       muted: !this.state.muted,
@@ -184,9 +205,13 @@ class Client extends React.Component {
     }
   }
 
-  addUser = () => {
+  removeUser = (slug) => {
+    base.remove(`channels/${slug}/users/${this.state.userKey}`)
+  }
+
+  addUser = (slug) => {
     // Add user and set listener for onDisconnect
-    const ref = base.push(`channels/${this.state.currentChannel}/users`, {
+    const ref = base.push(`channels/${slug}/users`, {
       data: { time: 0 },
     })
     ref.onDisconnect().remove()
@@ -215,6 +240,7 @@ class Client extends React.Component {
         <YouTube
           videoId={this.state.currentVideoId}
           onReady={this.onReady}
+          onStateChange={this.onStateChange}
           onEnd={this.onEnd}
           opts={opts}
           className="video"
