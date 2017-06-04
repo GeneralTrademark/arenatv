@@ -11,7 +11,7 @@ class App extends Component {
     super(props)
     this.state = {
       // playlistChannelSlug: 'arena-tv',
-      currentChannel: "video-1476643406",
+      currentChannel: "arena-tv",
       currentVideoName: '',
       // currentVideoId: 'iYJKd0rkKss',
       channels: [],
@@ -50,7 +50,7 @@ class App extends Component {
   getYoutubeId = (url) => {
     const regExp = /^.*((youtu.be\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\?))\??v?=?([^#\&\?]*).*/
     const match = url.match(regExp)
-    return (match && match[7].length === 11) ? match[7] : false
+    return (match && match[7].length === 11) ? match[7] : '3_XooZ65n6c'
   }
 
   // make a list of channels and their videos
