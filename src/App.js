@@ -67,6 +67,7 @@ class App extends Component {
               title: channel.title,
               health: 0,
               username: channel.user.username,
+              length: channel.length,
               // currentVideoIndex: 0,
               // time: 0,
             },
@@ -205,7 +206,7 @@ class App extends Component {
                 <p>{this.state.numUsers-1} {maybePluralize(this.state.numUsers-1, 'other')} {isare(this.state.numUsers-1, 'are')} watching with you.</p>
 
               </div>
-              <button className="button" onClick={(e) => this.onMuteVideo(e)}>{this.state.muted ? 'Sound On' : 'Sound Off'}</button>
+              <button className="button" id="mute" onClick={(e) => this.onMuteVideo(e)}>{this.state.muted ? <div className={'sound_off'} /> : <div className={'sound_on'} />}</button>
               </footer>
             </div>
               <Client

@@ -139,5 +139,24 @@ header, footer {
   -webkit-box-shadow: 4px 4px 30px -11px rgba(0,0,0,0.4);
   -moz-box-shadow: 4px 4px 30px -11px rgba(0,0,0,0.4);
   box-shadow: 4px 4px 30px -11px rgba(0,0,0,0.4);
+}
 
+.sound_on{
+  background-image: url('./icons/sound_on.svg');
+  background-size: 60px 18px;
+  background-repeat: no-repeat;
+  height: 18px;
+  width: 60px;
+}
+
+.sound_off{
+  background-image: url('./icons/sound_off.svg');
+  background-size: 60px 18px;
+  background-repeat: no-repeat;
+  height: 18px;
+  width: 60px;
+}
+
+#mute{
+  margin-right: 20px;
 }
