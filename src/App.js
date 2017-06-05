@@ -209,7 +209,7 @@ class App extends Component {
                 <p>{this.state.numUsers-1} {maybePluralize(this.state.numUsers-1, 'other')} {isare(this.state.numUsers-1, 'are')} watching with you.</p>
 
               </div>
-              <button className="button" onClick={() => this.onMuteVideo()}>Mute</button>
+              <button className="button" onClick={() => this.onMuteVideo()}>{this.state.muted ? 'Sound On' : 'Sound Off'}</button>
               </footer>
             </div>
               <Client
