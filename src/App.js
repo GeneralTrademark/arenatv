@@ -55,36 +55,25 @@ class App extends Component {
 
   // make a list of channels and their videos
   getChannels = () => {
-    let component = this
-    const getChannels = fetch(`${config.apiBase}/channels/arenatv`)
-    getChannels.then(resp => resp.json()).then(channels => {
-      let channelArr = channels.contents
-      channelArr = channelArr.map((channel) => {
-        let channelObject = {
-          slug: channel.slug,
-          title: channel.title,
-          videos: [],
-          health: 0,
-          username: channel.user.username,
-          currentVideoIndex: 0,
-          time: 0,
-        }
-        return channelObject
-      })
-      component.setState({channels: channelArr})
-      channelArr.map((channel) => {
-        base.update(`channels/${channel.slug}`, {
-          data: {
-            slug: channel.slug,
-            health: 0,
-            // username: channel.user.username,
-            // currentVideoIndex: 0,
-            // time: 0,
-          },
+      let component = this
+      const getChannels = fetch(`${config.apiBase}/channels/arenatv`)
+      getChannels.then(resp => resp.json()).then(channels => {
+        let channelArr = channels.contents
+        component.setState({channels: channelArr})
+        channelArr.map((channel) => {
+          base.update(`channels/${channel.slug}`, {
+            data: {
+              slug: channel.slug,
+              title: channel.title,
+              health: 0,
+              username: channel.user.username,
+              // currentVideoIndex: 0,
+              // time: 0,
+            },
+          })
         })
       })
-    })
-  }
+    }
 
   getVids = (targetSlug) => {
     const channels = this.state.channels
@@ -107,7 +96,6 @@ class App extends Component {
   }
 
   handleChangeChannel = (e, target) => {
-    console.log(e)
     this.setState({
       currentChannel: target,
     })
@@ -217,7 +205,7 @@ class App extends Component {
                 <p>{this.state.numUsers-1} {maybePluralize(this.state.numUsers-1, 'other')} {isare(this.state.numUsers-1, 'are')} watching with you.</p>
 
               </div>
-              <button className="button" onClick={(e) => this.onMuteVideo(e)}>Mute</button>
+              <button className="button" onClick={(e) => this.onMuteVideo(e)}>{this.state.muted ? 'Sound On' : 'Sound Off'}</button>
               </footer>
             </div>
               <Client
@@ -234,6 +222,7 @@ class App extends Component {
           <ChannelList
             handleChangeChannel={this.handleChangeChannel}
             channels={this.state.channels}
+            currentChannel={this.state.currentChannel}
           />
         </div>
       </div>

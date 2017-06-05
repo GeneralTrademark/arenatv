@@ -31,3 +31,8 @@ ul {
 .channelListItem:hover{
   border-color: white;
 }
+
+.heading{
+  display: flex;
+  flex-direction: column;
+}

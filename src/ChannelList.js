@@ -3,16 +3,16 @@ import './ChannelList.css'
 
 function ChannelList(props) {
   function getChannels() {
-    const channelList = props.channels.map(channel =>
-      <li className={'channelListItem'} onClick={(e) => props.handleChangeChannel(e, channel.slug)} key={channel.slug}>
-        <div className={'listContents'}>
-          {channel.title}
-        </div>
-        <div className={'listContents'}>
-          {'/'}
-        </div>
-        <div className={'listContents'}>
-          {channel.username}
+    const channelList = props.channels.map((channel, index) =>
+      <li
+        value={props.currentChannel === channel.slug ? 0 : index + 1}
+        className={'channelListItem'}
+        onClick={(e) => props.handleChangeChannel(e, channel.slug)}
+        key={channel.slug}>
+        <div className={'heading'}>
+            <h2>{channel.title}</h2>
+            <p>{channel.user.username}</p>
+            <p>{'23 videos'}</p>
         </div>
       </li>
     )
@@ -22,9 +22,9 @@ function ChannelList(props) {
   return (
     <div className={'trayContents'}>
       {'channels'}
-      <ul>
+      <ol>
         {getChannels()}
-      </ul>
+      </ol>
     </div>
   )
 }

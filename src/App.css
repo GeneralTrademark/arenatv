@@ -121,5 +121,23 @@ header, footer {
   background-color: black;
   transition: width 300ms;
   overflow-x: hidden;
+}
+
+.bubble{
+  opacity: 0;
+  visibility: hidden;
+  /*display: none;*/
+  max-width: 200px;
+  padding: 10px;
+  position: absolute;
+  transform: translateX(calc(-50% + 17px)) translateY(10px);
+  background: #f1f1f1;
+  font-size: 16px;
+  color:black;
+  border-radius: 4px;
+  transition: opacity 0.1s ease;
+  -webkit-box-shadow: 4px 4px 30px -11px rgba(0,0,0,0.4);
+  -moz-box-shadow: 4px 4px 30px -11px rgba(0,0,0,0.4);
+  box-shadow: 4px 4px 30px -11px rgba(0,0,0,0.4);
 
 }
