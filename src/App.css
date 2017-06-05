@@ -62,6 +62,8 @@ footer{
   display: block;
   border-radius: 24px / 12px;
   transition: background-color .5s;
+  background-color: #FFACAE;
+
 }
 
 .unstarted{

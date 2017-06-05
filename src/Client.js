@@ -69,14 +69,15 @@ class Client extends React.Component {
     this.addUser(slug)
   }
 
-  onStateChange = (event) => {
-    // console.log(event)
-    if (event.data === 3){
-      console.log('new video cued')
-    } else if (event.data === 1){
-      console.log('new video playing')
-    }
-  }
+  // onStateChange = (event) => {
+  //   console.log(event)
+  //   // console.log(event)
+  //   if (event.data === 3){
+  //     console.log('new video cued')
+  //   } else if (event.data === 1){
+  //     console.log('new video playing')
+  //   }
+  // }
 
   setListeners = () => {
     this.state.player.playVideo()

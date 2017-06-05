@@ -4,7 +4,7 @@ import './ChannelList.css'
 function ChannelList(props) {
   function getChannels() {
     const channelList = props.channels.map(channel =>
-      <li className={'channelListItem'} onClick={() => props.handleChangeChannel(channel.slug)} key={channel.slug}>
+      <li className={'channelListItem'} onClick={(e) => props.handleChangeChannel(e, channel.slug)} key={channel.slug}>
         <div className={'listContents'}>
           {channel.title}
         </div>

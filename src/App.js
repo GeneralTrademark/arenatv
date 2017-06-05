@@ -106,11 +106,14 @@ class App extends Component {
     })
   }
 
-  handleChangeChannel = (target) => {
+  handleChangeChannel = (e, target) => {
+    console.log(e)
     this.setState({
       currentChannel: target,
     })
     this.getVids(target)
+    e.stopPropagation()
+    e.preventDefault()
   }
 
   handleChangeUsers = (num) =>{
@@ -189,7 +192,6 @@ class App extends Component {
 
 
   render() {
-    console.log(this.state.currentVideoStatus)
     const maybePluralize = (count, noun, suffix = 's') =>
       `${noun}${count !== 1 ? suffix : ''}`
     const isare = (count, noun, suffix = 'is') =>
@@ -202,7 +204,7 @@ class App extends Component {
             <div className="overlay">
               <header>
                 <div className={'mark'} />
-                <button onClick={(e) => this.toggleTrayState(e)}>{'.tv'}</button>
+                <button onClick={(e) => this.toggleTrayState(e)}><h2>{'.tv'}</h2></button>
               </header>
               <footer>
               <div className={'info'}>

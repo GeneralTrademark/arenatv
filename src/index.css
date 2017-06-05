@@ -34,3 +34,13 @@ p{
   font-family: helvetica;
   font-weight: 500;
 }
+
+button{
+  border: none;
+  outline: none;
+  height: 40px;
+  width: 40px;
+  background-color: black;
+  color: white;
+  cursor: pointer;
+}

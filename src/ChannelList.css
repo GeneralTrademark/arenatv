@@ -20,6 +20,8 @@ ul {
   list-style-type: none;
   margin-bottom: 20px;
   padding: 1em;
+  text-align: left;
+  cursor: pointer;
 }
 
 .channelCurrent{
@@ -28,5 +30,4 @@ ul {
 
 .channelListItem:hover{
   border-color: white;
-
 }
