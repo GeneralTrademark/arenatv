@@ -36,3 +36,8 @@ ul {
   display: flex;
   flex-direction: column;
 }
+
+.meta{
+  display: flex;
+  justify-content: space-between;
+}

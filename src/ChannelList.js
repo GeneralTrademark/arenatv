@@ -12,7 +12,10 @@ function ChannelList(props) {
         <div className={'heading'}>
             <h2>{channel.title}</h2>
             <p>{channel.user.username}</p>
-            <p>{'23 videos'}</p>
+            <div className='meta'>
+              <p>{'23 videos'}</p>
+              <p>{'Link'}</p>
+            </div>
         </div>
       </li>
     )

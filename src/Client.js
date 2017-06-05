@@ -84,7 +84,7 @@ class Client extends React.Component {
       asArray: false,
       then(time) {
         // See if you need to catch up
-        this.seekToTime(time)
+        this.seekToTime(time, channel)
       },
     })
 
@@ -99,12 +99,11 @@ class Client extends React.Component {
     })
   }
 
-  seekToTime = (time) => {
-    // If you are more than 5 seconds behind the channel state seekTo
-    if ((time + 5) > Math.round(this.state.player.getCurrentTime())) {
+  seekToTime = (time, channel) => {
+    if (time > this.state.player.getCurrentTime()){
       this.state.player.playVideo()
       this.state.player.seekTo(time, true)
-      base.update(`channels/${this.props.channels}/users/${this.state.userKey}`, {
+      base.update(`channels/${this.props.channel}/users/${this.state.userKey}`, {
         data: { time: time },
       })
     }
@@ -119,6 +118,9 @@ class Client extends React.Component {
   }
 
   setUserTime = (users) => {
+    base.update(`channels/${this.props.channel}/users/${this.state.userKey}`, {
+      data: { time: this.state.player.getCurrentTime() },
+    })
     const timeStamps = []
     let counter = 0
     // Look through active users and store their timeStamps in an array
@@ -147,9 +149,9 @@ class Client extends React.Component {
     base.remove(`channels/${this.state.lastChannel}/users/${user}`)
   }
 
-  addUser(channel, timeStamp){
+  addUser(channel){
     const ref = base.push(`channels/${channel}/users`, {
-      data: { time: timeStamp },
+      data: { time: 0 },
     })
     ref.onDisconnect().remove()
     const generatedKey = ref.key
