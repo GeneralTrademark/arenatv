@@ -58,23 +58,12 @@ class App extends Component {
     const getChannels = fetch(`${config.apiBase}/channels/arenatv`)
     getChannels.then(resp => resp.json()).then(channels => {
       let channelArr = channels.contents
-      channelArr = channelArr.map((channel) => {
-        let channelObject = {
-          slug: channel.slug,
-          title: channel.title,
-          videos: [],
-          health: 0,
-          username: channel.user.username,
-          currentVideoIndex: 0,
-          time: 0,
-        }
-        return channelObject
-      })
       component.setState({channels: channelArr})
       channelArr.map((channel) => {
         base.update(`channels/${channel.slug}`, {
           data: {
             slug: channel.slug,
+            title: channel.title,
             health: 0,
             // username: channel.user.username,
             // currentVideoIndex: 0,
