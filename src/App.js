@@ -23,6 +23,7 @@ class App extends Component {
     super(props)
     this.state = {
       currentChannel: !this.props.URICurrentChannel ? 'herzog' : this.props.URICurrentChannel,
+      currentChannelName: '',
       currentVideoName: '',
       channels: [],
       numUsers: 0,
@@ -34,7 +35,6 @@ class App extends Component {
   }
 
   componentWillReceiveProps = (nextProps) => {
-    console.log(nextProps.URICurrentChannel, this.props.URICurrentChannel)
     if (nextProps.URICurrentChannel !== this.props.URICurrentChannel) {
       this.setState({
         currentChannel: nextProps.URICurrentChannel,
@@ -44,6 +44,7 @@ class App extends Component {
 
   componentWillMount = () => {
     this.getChannels()
+
 
     // this.getVids('arena-tv')
     // if channels changes, get all videos again
@@ -59,13 +60,9 @@ class App extends Component {
 
 
   classifyItem = (item) => {
-    const isAttachment = item.class === 'Attachment'
     const isMedia = item.class === "Media"
-
-    if (isAttachment && item.attachment.extension === "mp3") return "mp3"
-    if (isMedia && item.source.url.indexOf('soundcloud') > 0) return "soundcloud"
+    if (isMedia && item.source.url.indexOf('list') > 0) return "playlist"
     if (isMedia && item.source.url.indexOf('youtube') > 0) return "youtube"
-
     return 'notSupported'
   }
 
@@ -81,6 +78,10 @@ class App extends Component {
       const getChannels = fetch(`${config.apiBase}/channels/arenatv`)
       getChannels.then(resp => resp.json()).then(channels => {
         let channelArr = channels.contents
+        //make sure channel has contents
+        channelArr = channelArr.filter(channel => {
+          return channel.length > 0
+        })
         component.setState({channels: channelArr})
         channelArr.map((channel) => {
           base.update(`channels/${channel.slug}`, {
@@ -92,7 +93,7 @@ class App extends Component {
               // currentVideoIndex: 0,
               // time: 0,
             },
-          })
+          }).then(this.getCurrentChannelName(this.state.currentChannel))
         })
       })
     }
@@ -105,20 +106,13 @@ class App extends Component {
     const slugToQuery = channelToQuery[0].slug
     const getVideos = fetch(`${config.apiBase}/channels/${slugToQuery}/contents`)
     getVideos.then(resp => resp.json()).then(videos => {
-      console.log(videos)
       let youtubeVids = videos.contents.filter((video) => {
         return this.classifyItem(video) === 'youtube'
       })
+      console.log(youtubeVids)
       let youtubeSlugs = youtubeVids.map((video) => {
         return video = {url: this.getYoutubeId(video.source.url), title: video.title}
       })
-      // let youtubeName = youtubeVids.map((video) => {
-      //   return video.title
-      // })
-      // let ChannelVideos = {
-      //   video: youtubeSlugs,
-      //   title: youtubeName,
-      // }
       base.update(`channels/${targetSlug}`, {
         data: {videos: youtubeSlugs},
       })
@@ -127,6 +121,7 @@ class App extends Component {
 
   handleChangeChannel = (e, target) => {
     replaceUrlQuery({'ch': target})
+    this.getCurrentChannelName(target)
     this.getVids(target)
     e.stopPropagation()
     e.preventDefault()
@@ -149,6 +144,15 @@ class App extends Component {
   getVideoStatus = (status) => {
     this.setState({
       currentVideoStatus: status,
+    })
+  }
+
+  getCurrentChannelName = (target) => {
+    const currentChannel = this.state.channels.filter(channel => {
+      return channel.slug === target
+    })
+    this.setState({
+      currentChannelName: currentChannel[0].title,
     })
   }
 
@@ -246,15 +250,18 @@ class App extends Component {
           <div className="overlayContainer">
             <div className="overlay">
               <header>
+              <div className={'logoMark'}>
                 <div className={'mark'} />
-                <button id="channels" onClick={(e) => this.toggleTrayState(e)}><h2>{'Channels'}</h2></button>
+                <h1>{'– tv'}</h1>
+              </div>
+                <button id="channels" onClick={(e) => this.toggleTrayState(e)}><h2>{`${this.state.channels.length} Channels`}</h2></button>
               </header>
               <footer>
               <div className={'info'}>
                 <div className={this.indicateStatus()} />
                 <Favicon url={this.handleFavicon()}/>
                 <div className={'spacer'} />
-                <h2>{this.state.currentChannel}</h2>
+                <h2>{this.state.currentChannelName}</h2>
                 <div className={'spacer'} />
                 <p>{this.state.currentVideoName}</p>
                 <div className={'spacer'} />

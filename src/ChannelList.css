@@ -72,3 +72,9 @@
 .externalLink:hover{
   color: white;
 }
+
+.channelHeader:after{
+  content: '⤵';
+  padding-top: 10px;
+  margin-left: 10px;
+}
