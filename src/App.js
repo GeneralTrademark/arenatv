@@ -4,6 +4,7 @@ import base from './helpers/base'
 import Client from './Client3'
 import ChannelList from './ChannelList'
 import { decode, configureUrlQuery, addUrlProps, replaceUrlQuery, UrlQueryParamTypes } from 'react-url-query'
+import Favicon from 'react-favicon'
 import config from './config'
 import './App.css'
 
@@ -199,6 +200,33 @@ class App extends Component {
     return classToSet
   }
 
+  handleFavicon = () => {
+    let status
+    switch(this.state.currentVideoStatus) {
+    case -1:
+        status = 'unstarted'
+        break
+    case 0:
+        status = 'ended'
+        break
+    case 1:
+        status = 'playing'
+        break
+    case 2 || 5:
+        status = 'paused'
+        break
+    case 3:
+        status = 'buffering'
+        break
+    case 5:
+        status = 'cued'
+        break
+    default:
+        status = 'error'
+    }
+  return (`icons/${status}.png`)
+  }
+
 
   render() {
     const maybePluralize = (count, noun, suffix = 's') =>
@@ -218,6 +246,7 @@ class App extends Component {
               <footer>
               <div className={'info'}>
                 <div className={this.indicateStatus()} />
+                <Favicon url={this.handleFavicon()}/>
                 <div className={'spacer'} />
                 <h2>{this.state.currentChannel}</h2>
                 <div className={'spacer'} />
@@ -226,7 +255,11 @@ class App extends Component {
                 <p>{this.state.numUsers-1} {maybePluralize(this.state.numUsers-1, 'other')} {isare(this.state.numUsers-1, 'are')} watching with you.</p>
 
               </div>
-              <button className="button" id="mute" onClick={(e) => this.onMuteVideo(e)}>{this.state.muted ? <div className={'sound_off'} /> : <div className={'sound_on'} />}</button>
+              <button
+                className="button"
+                id="mute"
+                onClick={(e) => this.onMuteVideo(e)}>{this.state.muted ? <div className={'sound_off'} /> : <div className={'sound_on'} />}
+              </button>
               </footer>
             </div>
               <Client

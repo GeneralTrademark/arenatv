@@ -57,7 +57,7 @@ class Client extends React.Component {
       lastChannel: this.props.currentChannel,
     })
     this.updateTime()
-    //need to find a way to update channel time before this 
+    //need to find a way to update channel time before this
     this.removeUser()
   }
 
