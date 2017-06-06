@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import base from './helpers/base'
-import Client from './Client'
+import Client from './Client3'
 import ChannelList from './ChannelList'
 import config from './config'
 import './App.css'
@@ -11,7 +11,7 @@ class App extends Component {
     super(props)
     this.state = {
       // playlistChannelSlug: 'arena-tv',
-      currentChannel: "arena-tv",
+      currentChannel: "herzog",
       currentVideoName: '',
       // currentVideoId: 'iYJKd0rkKss',
       channels: [],
@@ -24,6 +24,7 @@ class App extends Component {
 
   componentWillMount = () => {
     this.getChannels()
+
     // this.getVids('arena-tv')
     // if channels changes, get all videos again
     // base.listenTo('channels', {
