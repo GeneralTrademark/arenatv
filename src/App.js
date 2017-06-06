@@ -109,7 +109,6 @@ class App extends Component {
       let youtubeVids = videos.contents.filter((video) => {
         return this.classifyItem(video) === 'youtube'
       })
-      console.log(youtubeVids)
       let youtubeSlugs = youtubeVids.map((video) => {
         return video = {url: this.getYoutubeId(video.source.url), title: video.title}
       })
@@ -211,32 +210,30 @@ class App extends Component {
   }
 
   handleFavicon = () => {
-    let status
+    let data
     switch(this.state.currentVideoStatus) {
     case -1:
-        status = 'unstarted'
+        data = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAXNSR0IArs4c6QAAAXRJREFUWAljYBgFoyEwGgIDHAKMxNr///9/ZoYN2xUYGP+qM/z7J8rAyMAL1AvCIPCZ4T8QMzG9ZvjPfJMhwPMBIyPjX4gUfhKnA8AWbtpkx/CPwRVoBAjrMvz/z47fOKgsI+NPIOsyEO9mYAJiP79DuByE4YD/GzeKM/z9nw7UnArEMkBMDfAEaMhsBm7OGYzu7q+QDYQ7ABLEm3MZGP43An3Kh6yIamxGxk8MDIz1DAG+k2EhAnbA//37eRg+fFoPtNiFapbhM4iRcQ+DAF8go6PjFyawz99/2kE3y0EOA3kUaCfIbsb/GzbkARPaRHwOppkcE0M+EzD7xNHMAkIGA+0GOUCdkDqayQPtZgIWKDdpZgEhg4F2gxywiJA6mskD7WYE54L1mw4Ck6Y1zSzCajDjUYZAP3smcIEgyOfBAMqb9AIgu4B2guweHCUhsscHrC5AdgSIDU4bA1EbojsExgc7iAbtAZj5o/RoCIyGwMgNAQBQ8pjlfYLQegAAAABJRU5ErkJggg=='
         break
     case 0:
-        status = 'ended'
+        data = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAXNSR0IArs4c6QAAAXRJREFUWAljYBgFoyEwGgIDHAKMxNr///9/ZoYN2xUYGP+qM/z7J8rAyMAL1AvCIPCZ4T8QMzG9ZvjPfJMhwPMBIyPjX4gUfhKnA8AWbtpkx/CPwRVoBAjrMvz/z47fOKgsI+NPIOsyEO9mYAJiP79DuByE4YD/GzeKM/z9nw7UnArEMkBMDfAEaMhsBm7OGYzu7q+QDYQ7ABLEm3MZGP43An3Kh6yIamxGxk8MDIz1DAG+k2EhAnbA//37eRg+fFoPtNiFapbhM4iRcQ+DAF8go6PjFyawz99/2kE3y0EOA3kUaCfIbsb/GzbkARPaRHwOppkcE0M+EzD7xNHMAkIGA+0GOUCdkDqayQPtZgIWKDdpZgEhg4F2gxywiJA6mskD7WYE54L1mw4Ck6Y1zSzCajDjUYZAP3smcIEgyOfBAMqb9AIgu4B2guweHCUhsscHrC5AdgSIDU4bA1EbojsExgc7iAbtAZj5o/RoCIyGwMgNAQBQ8pjlfYLQegAAAABJRU5ErkJggg=='
         break
     case 1:
-        status = 'playing'
+        data='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAXNSR0IArs4c6QAAAYhJREFUWAntlj9LA0EQxWf2CGkMSDAGwUKrFGJvYyTggaUJpLUTO/98BD+ChSDY2QajdkKEoCLYi0W0sbCJCSmMKObMjfuEA0lYvML1Cu+aZWfn3m/mwc0eUfzEDsQOROwAh+WXpexcH59PeX0vR0oy5HNKmFJ4n4W6OtbVsVbCSTTmlhceKlzph9E2FgDgZbWeZ+q7IuIS06wIJUOJMr2T0A0z14Sc2nypcGEqaKiA6ZPx7JvXWyPmVQ2eDAP8KUcX8kgi+6KSe81S8+l7vgo26HjiML356nl3QrT9W3DoQwua5PfuwQAr4H45MFPPjLQ73pG2bTE4sLoynY2lE8XbQutFoZp25+P0z+DoTDcKJticrY6uk087Vjs2iSvaUPoTWjGd246DrUQ4Zxtk0gdbMUvDlGA7DrbS0+zANsikD7bKF91dPXSuTEnW4poJdvRzAB1iIORL7pJitaWvlmdrXWttMMACE5zI74KhAoLuMaUiuQ2DAgZXFGTjf2CQE+9jB2IH/p8Dn8V2yWB9H+D3AAAAAElFTkSuQmCC'
         break
-    case 2 || 5:
-        status = 'paused'
+    case 2:
+        data = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAXNSR0IArs4c6QAAAYlJREFUWAntVj1Lw1AUvecVK37EzSrEwS2DiINDB0ERWrQ6+QfcxEn9CeJPEBfBzT/gVCu0IAoOCk7FIZugHaybsaJFe72vUAlKmgx9VjBZ8vJy3jnnHl7uC1F8xQnECXQ5AUTVZ+bEdaE6zqg7DcIwMSyZs/R6AB6BPUX8CE6607nUrcx9ROEONKAFL/OVWQXKMnFWyCaZqTcSKehNcGUQig2mYnrZPg8y9MNAufQwUnt9Xwd4TUyMRREMw4j4PTMO+noS+1MLo1U//stAs+JCZQPMO1LpkB/UqTFATwxsp3P2XiuRpoGb0+qgV6sfEXGmU2LteVCyBpIrE/OpZ6Ur917qJ78nrq1xRmtqbVzl7zZlo+y2d2zmrWzwLdVgrJqhD2fV2kpgTjjUGMLRBlxj9OHErlLgw3CcGYTWls9eOt5x5YyYZ8zIBLACF+kle07phmD1Jxelo5cCoAampQ+Iptb+G53QX2LXzgK/CT1u7o1unIbfjbSetSET/wMt/vgeJxAn8H8T+ATOLsXoaiZrTgAAAABJRU5ErkJggg=='
         break
     case 3:
-        status = 'buffering'
+        data = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAXNSR0IArs4c6QAAAYlJREFUWAntVj1Lw1AUvecVK37EzSrEwS2DiINDB0ERWrQ6+QfcxEn9CeJPEBfBzT/gVCu0IAoOCk7FIZugHaybsaJFe72vUAlKmgx9VjBZ8vJy3jnnHl7uC1F8xQnECXQ5AUTVZ+bEdaE6zqg7DcIwMSyZs/R6AB6BPUX8CE6607nUrcx9ROEONKAFL/OVWQXKMnFWyCaZqTcSKehNcGUQig2mYnrZPg8y9MNAufQwUnt9Xwd4TUyMRREMw4j4PTMO+noS+1MLo1U//stAs+JCZQPMO1LpkB/UqTFATwxsp3P2XiuRpoGb0+qgV6sfEXGmU2LteVCyBpIrE/OpZ6Ur917qJ78nrq1xRmtqbVzl7zZlo+y2d2zmrWzwLdVgrJqhD2fV2kpgTjjUGMLRBlxj9OHErlLgw3CcGYTWls9eOt5x5YyYZ8zIBLACF+kle07phmD1Jxelo5cCoAampQ+Iptb+G53QX2LXzgK/CT1u7o1unIbfjbSetSET/wMt/vgeJxAn8H8T+ATOLsXoaiZrTgAAAABJRU5ErkJggg=='
         break
     case 5:
-        status = 'cued'
         break
     default:
-        status = 'error'
+        data = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAXNSR0IArs4c6QAAAXRJREFUWAljYBgFoyEwGgIDHAKMxNr///9/ZoYN2xUYGP+qM/z7J8rAyMAL1AvCIPCZ4T8QMzG9ZvjPfJMhwPMBIyPjX4gUfhKnA8AWbtpkx/CPwRVoBAjrMvz/z47fOKgsI+NPIOsyEO9mYAJiP79DuByE4YD/GzeKM/z9nw7UnArEMkBMDfAEaMhsBm7OGYzu7q+QDYQ7ABLEm3MZGP43An3Kh6yIamxGxk8MDIz1DAG+k2EhAnbA//37eRg+fFoPtNiFapbhM4iRcQ+DAF8go6PjFyawz99/2kE3y0EOA3kUaCfIbsb/GzbkARPaRHwOppkcE0M+EzD7xNHMAkIGA+0GOUCdkDqayQPtZgIWKDdpZgEhg4F2gxywiJA6mskD7WYE54L1mw4Ck6Y1zSzCajDjUYZAP3smcIEgyOfBAMqb9AIgu4B2guweHCUhsscHrC5AdgSIDU4bA1EbojsExgc7iAbtAZj5o/RoCIyGwMgNAQBQ8pjlfYLQegAAAABJRU5ErkJggg=='
     }
-  return (`icons/${status}.png`)
+  return (data)
   }
-
 
   render() {
     const maybePluralize = (count, noun, suffix = 's') =>
@@ -271,7 +268,8 @@ class App extends Component {
               <button
                 className="button"
                 id="mute"
-                onClick={(e) => this.onMuteVideo(e)}>{this.state.muted ? <div className={'sound_off'} /> : <div className={'sound_on'} />}
+                onClick={(e) => this.onMuteVideo(e)}>
+                {this.state.muted ? <div className={'sound_off'} /> : <div className={'sound_on'} />}
               </button>
               </footer>
             </div>
