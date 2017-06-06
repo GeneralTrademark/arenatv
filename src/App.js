@@ -1,17 +1,28 @@
-import React, { Component } from 'react'
+import React, { Component, PropTypes } from 'react'
+import {browserHistory} from 'react-router-dom'
 import base from './helpers/base'
 import Client from './Client3'
 import ChannelList from './ChannelList'
+import { decode, configureUrlQuery, addUrlProps, replaceUrlQuery, UrlQueryParamTypes } from 'react-url-query'
 import config from './config'
 import './App.css'
 
+const urlPropsQueryConfig = {
+  URICurrentChannel: { type: UrlQueryParamTypes.string, queryParam: 'ch' },
+}
+
+configureUrlQuery({
+  addRouterParams: false,
+})
+
+const defaultChannelSlug = 'herzog'
 
 class App extends Component {
   constructor(props) {
     super(props)
     this.state = {
       // playlistChannelSlug: 'arena-tv',
-      currentChannel: "herzog",
+      currentChannel: !this.props.URICurrentChannel ? 'herzog' : this.props.URICurrentChannel,
       currentVideoName: '',
       // currentVideoId: 'iYJKd0rkKss',
       channels: [],
@@ -19,6 +30,16 @@ class App extends Component {
       muted: false,
       currentVideoStatus: -1,
       trayOpen: false,
+    }
+    replaceUrlQuery({'ch': this.state.currentChannel })
+  }
+
+  componentWillReceiveProps = (nextProps) => {
+    console.log(nextProps.URICurrentChannel, this.props.URICurrentChannel)
+    if (nextProps.URICurrentChannel !== this.props.URICurrentChannel) {
+      this.setState({
+        currentChannel: nextProps.URICurrentChannel,
+      })
     }
   }
 
@@ -35,6 +56,7 @@ class App extends Component {
     //   },
     // })
   }
+
 
 
   classifyItem = (item) => {
@@ -97,9 +119,7 @@ class App extends Component {
   }
 
   handleChangeChannel = (e, target) => {
-    this.setState({
-      currentChannel: target,
-    })
+    replaceUrlQuery({'ch': target})
     this.getVids(target)
     e.stopPropagation()
     e.preventDefault()
@@ -193,7 +213,7 @@ class App extends Component {
             <div className="overlay">
               <header>
                 <div className={'mark'} />
-                <button onClick={(e) => this.toggleTrayState(e)}><h2>{'.tv'}</h2></button>
+                <button id="channels" onClick={(e) => this.toggleTrayState(e)}><h2>{'Channels'}</h2></button>
               </header>
               <footer>
               <div className={'info'}>
@@ -231,4 +251,4 @@ class App extends Component {
   }
 }
 
-export default App
+export default addUrlProps({ urlPropsQueryConfig })(App)
