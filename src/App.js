@@ -1,7 +1,7 @@
 import React, { Component, PropTypes } from 'react'
 import {browserHistory} from 'react-router-dom'
 import base from './helpers/base'
-import Client from './Client3'
+import Client from './Client'
 import ChannelList from './ChannelList'
 import { decode, configureUrlQuery, addUrlProps, replaceUrlQuery, UrlQueryParamTypes } from 'react-url-query'
 import config from './config'
@@ -21,10 +21,8 @@ class App extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      // playlistChannelSlug: 'arena-tv',
       currentChannel: !this.props.URICurrentChannel ? 'herzog' : this.props.URICurrentChannel,
       currentVideoName: '',
-      // currentVideoId: 'iYJKd0rkKss',
       channels: [],
       numUsers: 0,
       muted: false,
@@ -106,14 +104,22 @@ class App extends Component {
     const slugToQuery = channelToQuery[0].slug
     const getVideos = fetch(`${config.apiBase}/channels/${slugToQuery}/contents`)
     getVideos.then(resp => resp.json()).then(videos => {
+      console.log(videos)
       let youtubeVids = videos.contents.filter((video) => {
         return this.classifyItem(video) === 'youtube'
       })
       let youtubeSlugs = youtubeVids.map((video) => {
-        return this.getYoutubeId(video.source.url)
+        return video = {url: this.getYoutubeId(video.source.url), title: video.title}
       })
+      // let youtubeName = youtubeVids.map((video) => {
+      //   return video.title
+      // })
+      // let ChannelVideos = {
+      //   video: youtubeSlugs,
+      //   title: youtubeName,
+      // }
       base.update(`channels/${targetSlug}`, {
-        data: {videos : youtubeSlugs},
+        data: {videos: youtubeSlugs},
       })
     })
   }
