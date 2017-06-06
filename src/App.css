@@ -103,6 +103,19 @@ header, footer {
 }
 
 .loadingCurtain{
+  width: 100%;
+  height: 100vh;
+  z-index: 99;
+  position: absolute;
+  background: 'green';
+  transition: opacity 1s;
+}
+
+.loadingCurtainOn{
+  opacity: 1;
+}
+
+.loadingCurtainOff{
   opacity: 0;
 }
 

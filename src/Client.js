@@ -45,7 +45,7 @@ class Client extends React.Component {
   muteAudio(muteState){
     muteState ? this.state.player.mute() : this.state.player.unMute()
   }
-  
+
   changeChannel(newChannel) {
     this.setState({
       lastChannel: this.props.currentChannel,
@@ -103,7 +103,7 @@ class Client extends React.Component {
     if (time > this.state.player.getCurrentTime()){
       this.state.player.playVideo()
       this.state.player.seekTo(time, true)
-      base.update(`channels/${this.props.channel}/users/${this.state.userKey}`, {
+      base.update(`channels/${channel}/users/${this.state.userKey}`, {
         data: { time: time },
       })
     }
@@ -118,7 +118,7 @@ class Client extends React.Component {
   }
 
   setUserTime = (users) => {
-    base.update(`channels/${this.props.channel}/users/${this.state.userKey}`, {
+    base.update(`channels/${this.props.currentChannel}/users/${this.state.userKey}`, {
       data: { time: this.state.player.getCurrentTime() },
     })
     const timeStamps = []
@@ -204,6 +204,15 @@ class Client extends React.Component {
 
   onStateChange = (event) => {
     this.props.getVideoStatus(event.data)
+    console.log(event.data)
+  }
+
+  handleLoadingState = () => {
+    if (!this.state.loaded) {
+      return 'loadingCurtainOn loadingCurtain'
+    } else {
+      return 'loadingCurtainOff loadingCurtain'
+    }
   }
 
   render() {
@@ -222,8 +231,8 @@ class Client extends React.Component {
       },
     }
     return (
-      this.state.loaded
-      ? <div className='videoWrapper'>
+      <div className='videoWrapper'>
+      <div className={this.handleLoadingState}/>
         <YouTube
           videoId={this.state.currentVideoId}
           onReady={this.onReady}
@@ -233,7 +242,6 @@ class Client extends React.Component {
           className="video"
         />
       </div>
-      : <div> {'Not loaded'}</div>
     )
   }
 }

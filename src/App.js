@@ -67,7 +67,6 @@ class App extends Component {
               title: channel.title,
               health: 0,
               username: channel.user.username,
-              length: channel.length,
               // currentVideoIndex: 0,
               // time: 0,
             },

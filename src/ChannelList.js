@@ -38,10 +38,8 @@ function ChannelList(props) {
                 </button>
               </div>
               <p>{channel.user.username}</p>
-
           </div>
           <div className='meta'>
-            <p>{`${channel.length} videos`}</p>
           </div>
         </div>
       )
