@@ -11,6 +11,11 @@ body, html {
   color: white;
 }
 
+a{
+  text-decoration: none;
+  color: white;
+}
+
 iframe{
   pointer-events: none;
 }
@@ -23,6 +28,8 @@ h2{
   font-size: 14px;
   font-family: helvetica;
   font-weight: 600;
+  margin:0;
+  padding:0;
 }
 
 h3{
@@ -33,14 +40,17 @@ p{
   font-size: 14px;
   font-family: helvetica;
   font-weight: 500;
+  margin:0;
+  padding:0;
+  margin-top: 10px;
 }
 
-.channelListItem{
-  display: flex;
+button{
+  border: none;
+  outline: none;
+  height: 40px;
+  width: 40px;
+  background-color: black;
+  color: white;
   cursor: pointer;
-  margin-top: 1rem;
-}
-
-.listContents{
-  margin-right: 1em;
 }

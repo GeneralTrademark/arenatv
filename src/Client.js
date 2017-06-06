@@ -41,10 +41,11 @@ class Client extends React.Component {
     this.props.muted !== nextProps.muted ? this.muteAudio(nextProps.muted) : null
   }
 
+
   muteAudio(muteState){
     muteState ? this.state.player.mute() : this.state.player.unMute()
   }
-
+  
   changeChannel(newChannel) {
     this.setState({
       lastChannel: this.props.currentChannel,

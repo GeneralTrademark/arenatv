@@ -1,9 +1,10 @@
 import React, { Component } from 'react'
-import './App.css'
 import base from './helpers/base'
 import Client from './Client3'
 import ChannelList from './ChannelList'
 import config from './config'
+import './App.css'
+
 
 class App extends Component {
   constructor(props) {
@@ -55,25 +56,26 @@ class App extends Component {
 
   // make a list of channels and their videos
   getChannels = () => {
-    let component = this
-    const getChannels = fetch(`${config.apiBase}/channels/arenatv`)
-    getChannels.then(resp => resp.json()).then(channels => {
-      let channelArr = channels.contents
-      component.setState({channels: channelArr})
-      channelArr.map((channel) => {
-        base.update(`channels/${channel.slug}`, {
-          data: {
-            slug: channel.slug,
-            title: channel.title,
-            health: 0,
-            // username: channel.user.username,
-            // currentVideoIndex: 0,
-            // time: 0,
-          },
+      let component = this
+      const getChannels = fetch(`${config.apiBase}/channels/arenatv`)
+      getChannels.then(resp => resp.json()).then(channels => {
+        let channelArr = channels.contents
+        component.setState({channels: channelArr})
+        channelArr.map((channel) => {
+          base.update(`channels/${channel.slug}`, {
+            data: {
+              slug: channel.slug,
+              title: channel.title,
+              health: 0,
+              username: channel.user.username,
+              length: channel.length,
+              // currentVideoIndex: 0,
+              // time: 0,
+            },
+          })
         })
       })
-    })
-  }
+    }
 
   getVids = (targetSlug) => {
     const channels = this.state.channels
@@ -95,11 +97,13 @@ class App extends Component {
     })
   }
 
-  handleChangeChannel = (target) => {
+  handleChangeChannel = (e, target) => {
     this.setState({
       currentChannel: target,
     })
     this.getVids(target)
+    e.stopPropagation()
+    e.preventDefault()
   }
 
   handleChangeUsers = (num) =>{
@@ -108,10 +112,12 @@ class App extends Component {
     })
   }
 
-  onMuteVideo = () => {
+  onMuteVideo = (event) => {
     this.setState({
       muted: !this.state.muted,
     })
+    event.stopPropagation()
+    event.preventDefault()
   }
 
   getVideoStatus = (status) => {
@@ -153,11 +159,13 @@ class App extends Component {
   return (`${status} indicator`)
   }
 
-  toggleTrayState = () => {
+  toggleTrayState = (event) => {
     const trayOpen = this.state.trayOpen
     this.setState({
       trayOpen: !trayOpen,
     })
+    event.stopPropagation()
+    event.preventDefault()
   }
 
 
@@ -165,9 +173,9 @@ class App extends Component {
     const trayOpen = this.state.trayOpen
     let classToSet
     if (trayOpen) {
-      classToSet = 'open'
+      classToSet = 'trayOpen'
     } else {
-      classToSet = 'closed'
+      classToSet = 'trayClosed'
     }
     return classToSet
   }
@@ -186,7 +194,7 @@ class App extends Component {
             <div className="overlay">
               <header>
                 <div className={'mark'} />
-                <button onClick={() => this.toggleTrayState()}>{'.tv'}</button>
+                <button onClick={(e) => this.toggleTrayState(e)}><h2>{'.tv'}</h2></button>
               </header>
               <footer>
               <div className={'info'}>
@@ -199,7 +207,7 @@ class App extends Component {
                 <p>{this.state.numUsers-1} {maybePluralize(this.state.numUsers-1, 'other')} {isare(this.state.numUsers-1, 'are')} watching with you.</p>
 
               </div>
-              <button className="button" onClick={() => this.onMuteVideo()}>{this.state.muted ? 'Sound On' : 'Sound Off'}</button>
+              <button className="button" id="mute" onClick={(e) => this.onMuteVideo(e)}>{this.state.muted ? <div className={'sound_off'} /> : <div className={'sound_on'} />}</button>
               </footer>
             </div>
               <Client
@@ -216,6 +224,7 @@ class App extends Component {
           <ChannelList
             handleChangeChannel={this.handleChangeChannel}
             channels={this.state.channels}
+            currentChannel={this.state.currentChannel}
           />
         </div>
       </div>
