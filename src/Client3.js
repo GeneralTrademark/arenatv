@@ -57,7 +57,7 @@ class Client extends React.Component {
       lastChannel: this.props.currentChannel,
     })
     this.updateTime()
-    //need to find a way to update channel time before this 
+    //need to find a way to update channel time before this
     this.removeUser()
   }
 
@@ -83,6 +83,7 @@ class Client extends React.Component {
       then(users){
         const timeStamps = []
         let counter = 0
+        this.props.handleChangeUsers(users.length)
         // Look through active users and store their timeStamps in an array
         users.forEach((user) => {
           counter++
@@ -118,6 +119,7 @@ class Client extends React.Component {
       context: this,
       asArray: true,
       then(users){
+        //something funny happening with empty array here
         this.props.handleChangeUsers(users.length)
         this.updateTime()
         console.log('new user present')
