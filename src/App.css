@@ -59,14 +59,16 @@ footer{
 
 .info{
   display: flex;
-  align-items: baseline;
+  align-items: center;
 }
 
 .spacer{
-  width: 1em;
+  width: 1.6em;
+  text-align: center;
 }
 
 .indicator{
+  margin-top: 1px;
   width: 24px;
   height: 12px;
   border-radius: 10px;

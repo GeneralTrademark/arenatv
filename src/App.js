@@ -258,12 +258,12 @@ class App extends Component {
                 <div className={this.indicateStatus()} />
                 <Favicon url={this.handleFavicon()}/>
                 <div className={'spacer'} />
-                <h2>{this.state.currentChannelName}</h2>
-                <div className={'spacer'} />
-                <p>{this.state.currentVideoName}</p>
-                <div className={'spacer'} />
+                <h2>{`${this.state.currentChannelName}`}</h2>
+                <div className={'spacer'}> {'–'} </div>
+                <p>{`${this.state.currentVideoName}`}</p>
+                <div className={'spacer'} > {'–'} </div>
                 <p>{this.state.numUsers-1} {maybePluralize(this.state.numUsers-1, 'other')} {isare(this.state.numUsers-1, 'are')} watching with you.</p>
-
+                {this.state.numUsers === 1 ? ' 😞' : null}
               </div>
               <button
                 className="button"
