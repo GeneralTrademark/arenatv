@@ -1,5 +1,4 @@
-import React, { Component, PropTypes } from 'react'
-import {browserHistory} from 'react-router-dom'
+import React, { Component } from 'react'
 import base from './helpers/base'
 import Client from './Client'
 import ChannelList from './ChannelList'
@@ -35,6 +34,7 @@ class App extends Component {
   componentWillReceiveProps = (nextProps) => {
     console.log(nextProps.URICurrentChannel, this.props.URICurrentChannel)
     if (nextProps.URICurrentChannel !== this.props.URICurrentChannel) {
+      console.log('SWITCHING!!!!!')
       this.setState({
         currentChannel: nextProps.URICurrentChannel,
       })
@@ -104,20 +104,13 @@ class App extends Component {
     const slugToQuery = channelToQuery[0].slug
     const getVideos = fetch(`${config.apiBase}/channels/${slugToQuery}/contents`)
     getVideos.then(resp => resp.json()).then(videos => {
-      console.log(videos)
+      // console.log(videos)
       let youtubeVids = videos.contents.filter((video) => {
         return this.classifyItem(video) === 'youtube'
       })
       let youtubeSlugs = youtubeVids.map((video) => {
         return video = {url: this.getYoutubeId(video.source.url), title: video.title}
       })
-      // let youtubeName = youtubeVids.map((video) => {
-      //   return video.title
-      // })
-      // let ChannelVideos = {
-      //   video: youtubeSlugs,
-      //   title: youtubeName,
-      // }
       base.update(`channels/${targetSlug}`, {
         data: {videos: youtubeSlugs},
       })
