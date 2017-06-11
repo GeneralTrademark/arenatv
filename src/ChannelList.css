@@ -1,0 +1,80 @@
+.trayContents {
+  overflow: scroll;
+  height: 100vh;
+  width: 100%;
+}
+
+.list {
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.channelHeader{
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.channelListItem{
+  border-width: 2px;
+  border-style: solid;
+  border-color: #333;
+  height: 120px;
+  width: calc(340px - 46px);
+  margin-left: 20px;
+  margin-right: 20px;
+  list-style-type: none;
+  margin-bottom: 20px;
+  padding: 1em;
+  text-align: left;
+  cursor: pointer;
+  color: silver;
+  display: flex;
+  justify-content: space-between;
+  flex-direction: column;
+}
+
+.channelCurrent{
+  border-color: white;
+}
+
+.channelListItem:hover{
+  border-color: white;
+  color: white;
+}
+
+.heading{
+  display: flex;
+  flex-direction: column;
+}
+
+.header{
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.meta{
+  display: flex;
+  justify-content: space-between;
+}
+
+.externalLink{
+  height: 20px;
+  width: 20px;
+  font-size: 16px;
+  color: #333;
+}
+
+.externalLink:hover{
+  color: white;
+}
+
+.channelHeader:after{
+  content: '⤵';
+  padding-top: 10px;
+  margin-left: 10px;
+}

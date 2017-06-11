@@ -1,5 +1,5 @@
 module.exports = {
-  apiBase: 'http://api.are.na/v2',
+  apiBase: 'https://api.are.na/v2',
   youtube: {
     clientID: '',
   },

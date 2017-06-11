@@ -6,18 +6,58 @@ body, html {
   margin: 0;
   padding: 0;
   font-family: sans-serif;
+  background: black;
+  overflow: hidden;
+  color: white;
+}
+
+a{
+  text-decoration: none;
+  color: white;
 }
 
 iframe{
   pointer-events: none;
 }
 
-.channelListItem{
-  display: flex;
-  cursor: pointer;
-  margin-top: 1rem;
+h1{
+  font-size: 19px;
+  font-family: helvetica;
+  font-weight: 400;
+  margin:0;
+  padding:0;
 }
 
-.listContents{
-  margin-right: 1em;
+h2{
+  font-size: 14px;
+  font-family: helvetica;
+  font-weight: 600;
+  margin:0;
+  padding:0;
+}
+
+h3{
+
+}
+
+p{
+  font-size: 14px;
+  font-family: helvetica;
+  font-weight: 500;
+  margin:0;
+  padding:0;
+}
+
+button{
+  border: none;
+  outline: none;
+  height: 40px;
+  width: 40px;
+  background-color: black;
+  color: white;
+  cursor: pointer;
+}
+
+button:hover{
+  opacity: 0.8;
 }

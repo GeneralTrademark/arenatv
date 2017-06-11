@@ -1,29 +1,58 @@
 import React from 'react'
+import './ChannelList.css'
 
 function ChannelList(props) {
+  function handleExternalLink(event, href){
+    window.location.assign(href)
+    event.preventDefault()
+    event.stopPropagation()
+  }
+
   function getChannels() {
-    const channelList = props.channels.map(channel =>
-      <li className={'channelListItem'} onClick={() => props.handleChangeChannel(channel.slug)} key={channel.slug}>
-        <div className={'listContents'}>
-          {channel.title}
+    const channelList = props.channels.map((channel, index) => {
+      let computed = {}
+      if (channel.slug === props.currentChannel) {
+        computed = {
+          order: -1,
+          border: '2px solid white',
+          color: 'white',
+        }
+      } else {
+        computed = {
+          order: index,
+        }
+      }
+      return (
+        <div
+          style={computed}
+          className={'channelListItem'}
+          onClick={(e) => props.handleChangeChannel(e, channel.slug)}
+          key={channel.slug}>
+          <div className={'heading'}>
+              <div className='header'>
+                <h2>{channel.title}</h2>
+                <button
+                  className={'externalLink'}
+                  onClick={(e) => handleExternalLink(e, `https://www.are.na/channels/${channel.slug}`)}>
+                  {'↗'}
+                </button>
+              </div>
+              <p>{channel.user.username}</p>
+          </div>
+          <div className='meta'>
+          </div>
         </div>
-        <div className={'listContents'}>
-          {'/'}
-        </div>
-        <div className={'listContents'}>
-          {channel.username}
-        </div>
-      </li>
-    )
+      )
+    })
     return channelList
   }
 
   return (
-    <div>
-      {'channels'}
-      <ul>
+    <div className={'trayContents'}>
+      <div className='channelHeader'><p>{'You\'re watching'}</p></div>
+      <div className='list'>
         {getChannels()}
-      </ul>
+      </div>
     </div>
   )
 }
