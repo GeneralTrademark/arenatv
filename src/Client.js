@@ -110,7 +110,7 @@ class Client extends React.Component {
   }
 
   updateSelf = (time) => {
-    console.log('updating self at ' + this.props.currentChannel)
+    console.log('updating self at ' + this.props.currentChannel + 'at ' + time)
     this.state.player.seekTo(time, true)
     // this.state.player.playVideo()
     base.update(`channels/${this.props.currentChannel}/userTime/${this.state.userTimeKey}`,{
@@ -189,8 +189,10 @@ class Client extends React.Component {
           this.updateTime(channel, this.state.userTimeKey, this.state.currentVideoTime)
         }
         if (data.length < 2){
+          console.log('I started the timer')
           this.timer = setInterval(this.tick, 5000)
         } else {
+          console.log('I cleared the timer')
           clearInterval(this.timer)
         }
         console.log('users changed')
@@ -209,6 +211,8 @@ class Client extends React.Component {
     base.remove(`channels/${this.props.currentChannel}/userPresence/${this.state.userPresenceKey}`)
     base.remove(`channels/${this.props.currentChannel}/userTime/${this.state.userTimeKey}`)
     console.log('refs got removed')
+
+    clearInterval(this.timer)
   }
 
   addUser = (channel) => {
@@ -270,16 +274,40 @@ class Client extends React.Component {
   }
 
   onReady = (event) => {
-    this.setState({
-      player: event.target,
-    })
+    console.log('I got onready event!! am I initialized? ' + this.state.initialized)
+    if (!this.state.initialized){
+      this.setState({
+        player: event.target,
+      })
+    }
 
-    if (this.state.player.getPlayerState() !== 1) {
+    if (!this.state.initialized && this.state.player.getPlayerState() !== 1) {
+      console.log('I set up again')
       this.props.getCurrentVideoName(this.state.currentVideoTitle)
       this.setUserTime(this.state.channel.time, this.state.channel.slug)
       this.addUser(this.state.channel.slug)
       this.setListeners(this.state.channel.slug)
+      this.setState({initialized: true})
     }
+  }
+
+  onQChange = () => {
+    if (this.state.currentUsers.length < 2 && this.state.player.getPlayerState() === 1){
+      clearInterval(this.timer)
+      console.log('I started the timer')
+      this.timer = setInterval(this.tick, 5000)
+    }
+  }
+
+  onError = () => {
+    base.fetch(`channels/${this.props.currentChannel}/currentVideoIndex`, {
+      context: this,
+      asArray: false,
+      then(index) {
+        console.log('i need to go to next')
+        this.incrementVideoIndex(index)
+      },
+    })
   }
 
   onEnd = () => {
@@ -294,9 +322,11 @@ class Client extends React.Component {
   }
 
   onStateChange = (event) => {
-    if (event.data === 1){
-      console.log(`playerTime is currently `+ this.state.player.getCurrentTime())
-    }
+    console.log(event)
+    console.log(event.data)
+    // if (event.data === 1){
+    //   console.log(`playerTime is currently `+ this.state.player.getCurrentTime())
+    // }
     this.props.getVideoStatus(event.data)
   }
 
@@ -324,6 +354,8 @@ class Client extends React.Component {
           onReady={this.onReady}
           onPlay={this.onPlay}
           onStateChange={this.onStateChange}
+          onPlaybackQualityChange={this.onQChange}
+          onError={this.onError}
           onEnd={this.onEnd}
           opts={opts}
           className="video"
