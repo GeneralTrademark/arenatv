@@ -3,6 +3,7 @@ import base from './helpers/base'
 import Client from './Client'
 import ChannelList from './ChannelList'
 import { decode, configureUrlQuery, addUrlProps, replaceUrlQuery, UrlQueryParamTypes } from 'react-url-query'
+import Favicon from 'react-favicon'
 import config from './config'
 import './App.css'
 
@@ -21,6 +22,7 @@ class App extends Component {
     super(props)
     this.state = {
       currentChannel: !this.props.URICurrentChannel ? 'herzog' : this.props.URICurrentChannel,
+      currentChannelName: '',
       currentVideoName: '',
       channels: [],
       numUsers: 0,
@@ -32,7 +34,6 @@ class App extends Component {
   }
 
   componentWillReceiveProps = (nextProps) => {
-    console.log(nextProps.URICurrentChannel, this.props.URICurrentChannel)
     if (nextProps.URICurrentChannel !== this.props.URICurrentChannel) {
       console.log('SWITCHING!!!!!')
       this.setState({
@@ -43,6 +44,7 @@ class App extends Component {
 
   componentWillMount = () => {
     this.getChannels()
+
 
     // this.getVids('arena-tv')
     // if channels changes, get all videos again
@@ -58,13 +60,9 @@ class App extends Component {
 
 
   classifyItem = (item) => {
-    const isAttachment = item.class === 'Attachment'
     const isMedia = item.class === "Media"
-
-    if (isAttachment && item.attachment.extension === "mp3") return "mp3"
-    if (isMedia && item.source.url.indexOf('soundcloud') > 0) return "soundcloud"
+    if (isMedia && item.source.url.indexOf('list') > 0) return "playlist"
     if (isMedia && item.source.url.indexOf('youtube') > 0) return "youtube"
-
     return 'notSupported'
   }
 
@@ -80,6 +78,10 @@ class App extends Component {
       const getChannels = fetch(`${config.apiBase}/channels/arenatv`)
       getChannels.then(resp => resp.json()).then(channels => {
         let channelArr = channels.contents
+        //make sure channel has contents
+        channelArr = channelArr.filter(channel => {
+          return channel.length > 0
+        })
         component.setState({channels: channelArr})
         channelArr.map((channel) => {
           base.update(`channels/${channel.slug}`, {
@@ -91,7 +93,7 @@ class App extends Component {
               // currentVideoIndex: 0,
               // time: 0,
             },
-          })
+          }).then(this.getCurrentChannelName(this.state.currentChannel))
         })
       })
     }
@@ -104,7 +106,10 @@ class App extends Component {
     const slugToQuery = channelToQuery[0].slug
     const getVideos = fetch(`${config.apiBase}/channels/${slugToQuery}/contents`)
     getVideos.then(resp => resp.json()).then(videos => {
+<<<<<<< HEAD
       // console.log(videos)
+=======
+>>>>>>> origin/frontend
       let youtubeVids = videos.contents.filter((video) => {
         return this.classifyItem(video) === 'youtube'
       })
@@ -119,6 +124,7 @@ class App extends Component {
 
   handleChangeChannel = (e, target) => {
     replaceUrlQuery({'ch': target})
+    this.getCurrentChannelName(target)
     this.getVids(target)
     e.stopPropagation()
     e.preventDefault()
@@ -141,6 +147,15 @@ class App extends Component {
   getVideoStatus = (status) => {
     this.setState({
       currentVideoStatus: status,
+    })
+  }
+
+  getCurrentChannelName = (target) => {
+    const currentChannel = this.state.channels.filter(channel => {
+      return channel.slug === target
+    })
+    this.setState({
+      currentChannelName: currentChannel[0].title,
     })
   }
 
@@ -198,6 +213,31 @@ class App extends Component {
     return classToSet
   }
 
+  handleFavicon = () => {
+    let data
+    switch(this.state.currentVideoStatus) {
+    case -1:
+        data = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAXNSR0IArs4c6QAAAXRJREFUWAljYBgFoyEwGgIDHAKMxNr///9/ZoYN2xUYGP+qM/z7J8rAyMAL1AvCIPCZ4T8QMzG9ZvjPfJMhwPMBIyPjX4gUfhKnA8AWbtpkx/CPwRVoBAjrMvz/z47fOKgsI+NPIOsyEO9mYAJiP79DuByE4YD/GzeKM/z9nw7UnArEMkBMDfAEaMhsBm7OGYzu7q+QDYQ7ABLEm3MZGP43An3Kh6yIamxGxk8MDIz1DAG+k2EhAnbA//37eRg+fFoPtNiFapbhM4iRcQ+DAF8go6PjFyawz99/2kE3y0EOA3kUaCfIbsb/GzbkARPaRHwOppkcE0M+EzD7xNHMAkIGA+0GOUCdkDqayQPtZgIWKDdpZgEhg4F2gxywiJA6mskD7WYE54L1mw4Ck6Y1zSzCajDjUYZAP3smcIEgyOfBAMqb9AIgu4B2guweHCUhsscHrC5AdgSIDU4bA1EbojsExgc7iAbtAZj5o/RoCIyGwMgNAQBQ8pjlfYLQegAAAABJRU5ErkJggg=='
+        break
+    case 0:
+        data = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAXNSR0IArs4c6QAAAXRJREFUWAljYBgFoyEwGgIDHAKMxNr///9/ZoYN2xUYGP+qM/z7J8rAyMAL1AvCIPCZ4T8QMzG9ZvjPfJMhwPMBIyPjX4gUfhKnA8AWbtpkx/CPwRVoBAjrMvz/z47fOKgsI+NPIOsyEO9mYAJiP79DuByE4YD/GzeKM/z9nw7UnArEMkBMDfAEaMhsBm7OGYzu7q+QDYQ7ABLEm3MZGP43An3Kh6yIamxGxk8MDIz1DAG+k2EhAnbA//37eRg+fFoPtNiFapbhM4iRcQ+DAF8go6PjFyawz99/2kE3y0EOA3kUaCfIbsb/GzbkARPaRHwOppkcE0M+EzD7xNHMAkIGA+0GOUCdkDqayQPtZgIWKDdpZgEhg4F2gxywiJA6mskD7WYE54L1mw4Ck6Y1zSzCajDjUYZAP3smcIEgyOfBAMqb9AIgu4B2guweHCUhsscHrC5AdgSIDU4bA1EbojsExgc7iAbtAZj5o/RoCIyGwMgNAQBQ8pjlfYLQegAAAABJRU5ErkJggg=='
+        break
+    case 1:
+        data='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAXNSR0IArs4c6QAAAYhJREFUWAntlj9LA0EQxWf2CGkMSDAGwUKrFGJvYyTggaUJpLUTO/98BD+ChSDY2QajdkKEoCLYi0W0sbCJCSmMKObMjfuEA0lYvML1Cu+aZWfn3m/mwc0eUfzEDsQOROwAh+WXpexcH59PeX0vR0oy5HNKmFJ4n4W6OtbVsVbCSTTmlhceKlzph9E2FgDgZbWeZ+q7IuIS06wIJUOJMr2T0A0z14Sc2nypcGEqaKiA6ZPx7JvXWyPmVQ2eDAP8KUcX8kgi+6KSe81S8+l7vgo26HjiML356nl3QrT9W3DoQwua5PfuwQAr4H45MFPPjLQ73pG2bTE4sLoynY2lE8XbQutFoZp25+P0z+DoTDcKJticrY6uk087Vjs2iSvaUPoTWjGd246DrUQ4Zxtk0gdbMUvDlGA7DrbS0+zANsikD7bKF91dPXSuTEnW4poJdvRzAB1iIORL7pJitaWvlmdrXWttMMACE5zI74KhAoLuMaUiuQ2DAgZXFGTjf2CQE+9jB2IH/p8Dn8V2yWB9H+D3AAAAAElFTkSuQmCC'
+        break
+    case 2:
+        data = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAXNSR0IArs4c6QAAAYlJREFUWAntVj1Lw1AUvecVK37EzSrEwS2DiINDB0ERWrQ6+QfcxEn9CeJPEBfBzT/gVCu0IAoOCk7FIZugHaybsaJFe72vUAlKmgx9VjBZ8vJy3jnnHl7uC1F8xQnECXQ5AUTVZ+bEdaE6zqg7DcIwMSyZs/R6AB6BPUX8CE6607nUrcx9ROEONKAFL/OVWQXKMnFWyCaZqTcSKehNcGUQig2mYnrZPg8y9MNAufQwUnt9Xwd4TUyMRREMw4j4PTMO+noS+1MLo1U//stAs+JCZQPMO1LpkB/UqTFATwxsp3P2XiuRpoGb0+qgV6sfEXGmU2LteVCyBpIrE/OpZ6Ur917qJ78nrq1xRmtqbVzl7zZlo+y2d2zmrWzwLdVgrJqhD2fV2kpgTjjUGMLRBlxj9OHErlLgw3CcGYTWls9eOt5x5YyYZ8zIBLACF+kle07phmD1Jxelo5cCoAampQ+Iptb+G53QX2LXzgK/CT1u7o1unIbfjbSetSET/wMt/vgeJxAn8H8T+ATOLsXoaiZrTgAAAABJRU5ErkJggg=='
+        break
+    case 3:
+        data = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAXNSR0IArs4c6QAAAYlJREFUWAntVj1Lw1AUvecVK37EzSrEwS2DiINDB0ERWrQ6+QfcxEn9CeJPEBfBzT/gVCu0IAoOCk7FIZugHaybsaJFe72vUAlKmgx9VjBZ8vJy3jnnHl7uC1F8xQnECXQ5AUTVZ+bEdaE6zqg7DcIwMSyZs/R6AB6BPUX8CE6607nUrcx9ROEONKAFL/OVWQXKMnFWyCaZqTcSKehNcGUQig2mYnrZPg8y9MNAufQwUnt9Xwd4TUyMRREMw4j4PTMO+noS+1MLo1U//stAs+JCZQPMO1LpkB/UqTFATwxsp3P2XiuRpoGb0+qgV6sfEXGmU2LteVCyBpIrE/OpZ6Ur917qJ78nrq1xRmtqbVzl7zZlo+y2d2zmrWzwLdVgrJqhD2fV2kpgTjjUGMLRBlxj9OHErlLgw3CcGYTWls9eOt5x5YyYZ8zIBLACF+kle07phmD1Jxelo5cCoAampQ+Iptb+G53QX2LXzgK/CT1u7o1unIbfjbSetSET/wMt/vgeJxAn8H8T+ATOLsXoaiZrTgAAAABJRU5ErkJggg=='
+        break
+    case 5:
+        break
+    default:
+        data = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAXNSR0IArs4c6QAAAXRJREFUWAljYBgFoyEwGgIDHAKMxNr///9/ZoYN2xUYGP+qM/z7J8rAyMAL1AvCIPCZ4T8QMzG9ZvjPfJMhwPMBIyPjX4gUfhKnA8AWbtpkx/CPwRVoBAjrMvz/z47fOKgsI+NPIOsyEO9mYAJiP79DuByE4YD/GzeKM/z9nw7UnArEMkBMDfAEaMhsBm7OGYzu7q+QDYQ7ABLEm3MZGP43An3Kh6yIamxGxk8MDIz1DAG+k2EhAnbA//37eRg+fFoPtNiFapbhM4iRcQ+DAF8go6PjFyawz99/2kE3y0EOA3kUaCfIbsb/GzbkARPaRHwOppkcE0M+EzD7xNHMAkIGA+0GOUCdkDqayQPtZgIWKDdpZgEhg4F2gxywiJA6mskD7WYE54L1mw4Ck6Y1zSzCajDjUYZAP3smcIEgyOfBAMqb9AIgu4B2guweHCUhsscHrC5AdgSIDU4bA1EbojsExgc7iAbtAZj5o/RoCIyGwMgNAQBQ8pjlfYLQegAAAABJRU5ErkJggg=='
+    }
+  return (data)
+  }
 
   render() {
     const maybePluralize = (count, noun, suffix = 's') =>
@@ -211,21 +251,30 @@ class App extends Component {
           <div className="overlayContainer">
             <div className="overlay">
               <header>
+              <div className={'logoMark'}>
                 <div className={'mark'} />
-                <button id="channels" onClick={(e) => this.toggleTrayState(e)}><h2>{'Channels'}</h2></button>
+                <h1>{'– tv'}</h1>
+              </div>
+                <button id="channels" onClick={(e) => this.toggleTrayState(e)}><h2>{`${this.state.channels.length} Channels`}</h2></button>
               </header>
               <footer>
               <div className={'info'}>
                 <div className={this.indicateStatus()} />
+                <Favicon url={this.handleFavicon()}/>
                 <div className={'spacer'} />
-                <h2>{this.state.currentChannel}</h2>
-                <div className={'spacer'} />
-                <p>{this.state.currentVideoName}</p>
-                <div className={'spacer'} />
+                <h2>{`${this.state.currentChannelName}`}</h2>
+                <div className={'spacer'}> {'–'} </div>
+                <p>{`${this.state.currentVideoName}`}</p>
+                <div className={'spacer'} > {'–'} </div>
                 <p>{this.state.numUsers-1} {maybePluralize(this.state.numUsers-1, 'other')} {isare(this.state.numUsers-1, 'are')} watching with you.</p>
-
+                {this.state.numUsers === 1 ? ' 😞' : null}
               </div>
-              <button className="button" id="mute" onClick={(e) => this.onMuteVideo(e)}>{this.state.muted ? <div className={'sound_off'} /> : <div className={'sound_on'} />}</button>
+              <button
+                className="button"
+                id="mute"
+                onClick={(e) => this.onMuteVideo(e)}>
+                {this.state.muted ? <div className={'sound_off'} /> : <div className={'sound_on'} />}
+              </button>
               </footer>
             </div>
               <Client

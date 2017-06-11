@@ -49,7 +49,7 @@ function ChannelList(props) {
 
   return (
     <div className={'trayContents'}>
-      <div className='channelHeader'><h2>{''}</h2></div>
+      <div className='channelHeader'><p>{'You\'re watching'}</p></div>
       <div className='list'>
         {getChannels()}
       </div>

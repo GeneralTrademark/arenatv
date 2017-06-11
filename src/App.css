@@ -38,6 +38,17 @@ header{
   background-repeat: no-repeat;
   height: 26px;
   width: 26px;
+  margin-right: 6px;
+}
+
+.logoMark{
+  width: auto;
+  display: flex;
+  align-items: center;
+}
+
+.logoMark h1{
+  margin-bottom: 2px;
 }
 
 footer{
@@ -48,14 +59,16 @@ footer{
 
 .info{
   display: flex;
-  align-items: baseline;
+  align-items: center;
 }
 
 .spacer{
-  width: 1em;
+  width: 1.6em;
+  text-align: center;
 }
 
 .indicator{
+  margin-top: 1px;
   width: 24px;
   height: 12px;
   border-radius: 10px;
@@ -63,7 +76,6 @@ footer{
   border-radius: 24px / 12px;
   transition: background-color .5s;
   background-color: #FFACAE;
-
 }
 
 .unstarted{
@@ -175,5 +187,6 @@ header, footer {
 }
 
 #channels{
-  margin-right: 30px;
+  width: auto;
+  display: flex;
 }
