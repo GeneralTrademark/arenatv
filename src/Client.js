@@ -341,6 +341,9 @@ class Client extends React.Component {
         modestbranding: 1,
         autohide: 1,
         showinfo: 0,
+        enablejsapi: 1,
+        disablekb: 1,
+        v_load_policy: 3,
       },
     }
     return (

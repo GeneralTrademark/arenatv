@@ -160,20 +160,17 @@ header, footer {
 }
 
 .tray{
+  background-color: black;
+  transition: width 300ms;
+  overflow-x: hidden;
 }
 
 .trayOpen{
   width: 340px;
-  background-color: black;
-  transition: width 300ms;
-  overflow-x: hidden;
 }
 
 .trayClosed{
   width: 0;
-  background-color: black;
-  transition: width 300ms;
-  overflow-x: hidden;
 }
 
 .bubble{

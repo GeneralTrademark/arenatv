@@ -143,6 +143,7 @@ class App extends Component {
   }
 
   getVideoStatus = (status) => {
+    console.log(status)
     this.setState({
       currentVideoStatus: status,
     })
@@ -172,8 +173,9 @@ class App extends Component {
   handleLoadingState = () => {
     if (this.state.isClientLoaded === true && this.state.currentVideoStatus === 1) {
       return 'loadingState' + ' ' + 'loadingOff'
-    } else
-    return 'loadingState' + ' ' + 'loadingOn'
+    } else {
+      return 'loadingState' + ' ' + 'loadingOn'
+    }
   }
 
   indicateStatus = () => {
@@ -217,9 +219,9 @@ class App extends Component {
     const trayOpen = this.state.trayOpen
     let classToSet
     if (trayOpen) {
-      classToSet = 'trayOpen'
+      classToSet = 'trayOpen' + ' ' + 'tray'
     } else {
-      classToSet = 'trayClosed'
+      classToSet = 'trayClosed' + ' ' + 'tray'
     }
     return classToSet
   }
