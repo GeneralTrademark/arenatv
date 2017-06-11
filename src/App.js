@@ -106,10 +106,6 @@ class App extends Component {
     const slugToQuery = channelToQuery[0].slug
     const getVideos = fetch(`${config.apiBase}/channels/${slugToQuery}/contents`)
     getVideos.then(resp => resp.json()).then(videos => {
-<<<<<<< HEAD
-      // console.log(videos)
-=======
->>>>>>> origin/frontend
       let youtubeVids = videos.contents.filter((video) => {
         return this.classifyItem(video) === 'youtube'
       })
