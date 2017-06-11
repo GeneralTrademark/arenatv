@@ -30,6 +30,7 @@ header{
   display: flex;
   justify-content: space-between;
   align-items: center;
+  z-index: 99;
 }
 
 .mark{
@@ -38,7 +39,16 @@ header{
   background-repeat: no-repeat;
   height: 26px;
   width: 26px;
-  margin-right: 6px;
+  margin-right: 0px;
+}
+
+.slash{
+  display: block;
+  height: 26px;
+  border-right: 2px solid white;
+  transform: rotate(20deg);
+  margin-right: 10px;
+  margin-left: 10px;
 }
 
 .logoMark{
@@ -55,6 +65,8 @@ footer{
   display: flex;
   justify-content: space-between;
   align-items: center;
+  z-index: 99;
+
 }
 
 .info{
@@ -114,20 +126,36 @@ header, footer {
   height: 100vh;
 }
 
-.loadingCurtain{
-  width: 100%;
-  height: 100vh;
-  z-index: 99;
-  position: absolute;
-  background: 'green';
-  transition: opacity 1s;
+@keyframes barberpole {
+  from { background-position: 0 0; }
+  to   { background-position: 300px 150px; }
 }
 
-.loadingCurtainOn{
+.loadingState {
+  width: 100%;
+  height: 100vh;
+  position: absolute;
+  z-index: 90;
+  transition: opacity 500ms;
+  background-size: 150px 150px;
+  background-image: linear-gradient(
+    45deg,
+    #0c0c0c  25%,
+    black       25%,
+    black       50%,
+    #0c0c0c  50%,
+    #0c0c0c 75%,
+    black       75%,
+    black
+  );
+  animation: barberpole 1s linear infinite;
+}
+
+.loadingOn {
   opacity: 1;
 }
 
-.loadingCurtainOff{
+.loadingOff{
   opacity: 0;
 }
 
