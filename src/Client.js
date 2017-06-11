@@ -49,6 +49,8 @@ class Client extends React.Component {
   }
 
   tick = () =>{
+    console.log('timer tick')
+    console.log(this.state.player.getCurrentTime())
     let time = this.state.player.getCurrentTime()
     base.update(`channels/${this.props.currentChannel}/`,{
       data: {time: time},
@@ -57,6 +59,8 @@ class Client extends React.Component {
       context: this,
       data: {time: time},
     })
+    this.setState({currentVideoTime: time})
+    console.log(this.state.currentVideoTime)
   }
 
   componentWillUpdate(nextProps){
@@ -92,6 +96,7 @@ class Client extends React.Component {
   }
 
   setChannelTime = (time, channel) => {
+    this.setState({currentVideoTime: time})
     base.update(`channels/${this.props.currentChannel}/`,{
       data: {time: time},
     })
@@ -163,7 +168,7 @@ class Client extends React.Component {
       context: this,
       asArray: false,
       then(index) {
-        if (index != this.state.currentVideoIndex){
+        if (index !== this.state.currentVideoIndex){
           this.skipToNext(index)
           console.log('the video changed ' + index)
         }
@@ -185,6 +190,7 @@ class Client extends React.Component {
           currentUsers: data,
         })
         this.props.handleChangeUsers(data.length)
+        // this.props.getChannels()
         if (this.state.player.getPlayerState() === 1){
           this.updateTime(channel, this.state.userTimeKey, this.state.currentVideoTime)
         }
@@ -274,12 +280,15 @@ class Client extends React.Component {
   }
 
   onReady = (event) => {
+    this.setState({
+      player: event.target,
+    })
     console.log('I got onready event!! am I initialized? ' + this.state.initialized)
-    if (!this.state.initialized){
-      this.setState({
-        player: event.target,
-      })
-    }
+    // if (!this.state.initialized){
+    //   this.setState({
+    //     player: event.target,
+    //   })
+    // }
 
     if (!this.state.initialized && this.state.player.getPlayerState() !== 1) {
       console.log('I set up again')
@@ -292,11 +301,10 @@ class Client extends React.Component {
   }
 
   onQChange = () => {
-    if (this.state.currentUsers.length < 2 && this.state.player.getPlayerState() === 1){
-      clearInterval(this.timer)
-      console.log('I started the timer')
-      this.timer = setInterval(this.tick, 5000)
-    }
+    console.log('quality changed')
+    console.log(this.state.player.getCurrentTime())
+    console.log(this.state.currentVideoTime)
+    this.state.player.seekTo(this.state.currentVideoTime, true)
   }
 
   onError = () => {

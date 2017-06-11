@@ -262,8 +262,7 @@ class App extends Component {
                 <div className={'spacer'}> {'–'} </div>
                 <p>{`${this.state.currentVideoName}`}</p>
                 <div className={'spacer'} > {'–'} </div>
-                <p>{this.state.numUsers-1} {maybePluralize(this.state.numUsers-1, 'other')} {isare(this.state.numUsers-1, 'are')} watching with you.</p>
-                {this.state.numUsers === 1 ? ' 😞' : null}
+                <p>{this.state.numUsers-1} {maybePluralize(this.state.numUsers-1, 'other')} {isare(this.state.numUsers-1, 'are')} watching with you. {this.state.numUsers === 1 ? ' 😞' : ' 🤗'}</p>
               </div>
               <button
                 className="button"
@@ -280,6 +279,7 @@ class App extends Component {
                 muted={this.state.muted}
                 getVideoStatus={this.getVideoStatus}
                 getCurrentVideoName={this.getCurrentVideoName}
+                getChannels={this.getChannels}
               />
           </div>
         </div>
