@@ -276,7 +276,7 @@ class App extends Component {
                 <div className={this.indicateStatus()} />
                 <Favicon url={this.handleFavicon()}/>
                 <div className={'spacer'} />
-                <h2>{`${this.state.currentChannelName}`}</h2>
+                <a id='currentVideoTitle' href={`https://www.are.na/channels/${this.state.currentChannel}`} target='_blank'><h2>{`${this.state.currentChannelName}`}</h2></a>
                 <div className={'smallSlash'} />
                 <p>{`${this.state.currentVideoName}`}</p>
               </div>

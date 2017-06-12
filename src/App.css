@@ -224,3 +224,7 @@ header, footer {
   width: auto;
   display: flex;
 }
+
+#currentVideoTitle:hover{
+  color: white;
+}
