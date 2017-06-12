@@ -44,8 +44,22 @@ header{
 
 .slash{
   display: block;
+<<<<<<< HEAD
   height: 26px;
   border-right: 2px solid white;
+=======
+  height: 19px;
+  border-right: 2px solid #a7a7a7;
+  transform: rotate(20deg);
+  margin-right: 10px;
+  margin-left: 10px;
+}
+
+.smallSlash{
+  display: block;
+  height: 14px;
+  border-right: 2px solid #a7a7a7;
+>>>>>>> origin/frontend
   transform: rotate(20deg);
   margin-right: 10px;
   margin-left: 10px;
@@ -66,7 +80,7 @@ footer{
   justify-content: space-between;
   align-items: center;
   z-index: 99;
-
+  flex-wrap: wrap;
 }
 
 .info{
@@ -80,7 +94,7 @@ footer{
 }
 
 .indicator{
-  margin-top: 1px;
+  margin-bottom: 1px;
   width: 24px;
   height: 12px;
   border-radius: 10px;
@@ -160,20 +174,17 @@ header, footer {
 }
 
 .tray{
+  background-color: black;
+  transition: width 300ms;
+  overflow-x: hidden;
 }
 
 .trayOpen{
   width: 340px;
-  background-color: black;
-  transition: width 300ms;
-  overflow-x: hidden;
 }
 
 .trayClosed{
   width: 0;
-  background-color: black;
-  transition: width 300ms;
-  overflow-x: hidden;
 }
 
 .bubble{
@@ -217,4 +228,8 @@ header, footer {
 #channels{
   width: auto;
   display: flex;
+}
+
+#currentVideoTitle:hover{
+  color: white;
 }

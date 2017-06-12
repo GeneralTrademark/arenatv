@@ -8,12 +8,12 @@ body, html {
   font-family: sans-serif;
   background: black;
   overflow: hidden;
-  color: white;
+  color: #a7a7a7;
 }
 
 a{
   text-decoration: none;
-  color: white;
+  color: #a7a7a7;
 }
 
 iframe{
@@ -54,10 +54,11 @@ button{
   height: 40px;
   width: 40px;
   background-color: transparent;
-  color: white;
+  color: #a7a7a7;
   cursor: pointer;
 }
 
 button:hover{
-  opacity: 0.8;
+  color: white;
+  fill: white;
 }

@@ -143,6 +143,7 @@ class App extends Component {
   }
 
   getVideoStatus = (status) => {
+    console.log(status)
     this.setState({
       currentVideoStatus: status,
     })
@@ -172,8 +173,9 @@ class App extends Component {
   handleLoadingState = () => {
     if (this.state.isClientLoaded === true && this.state.currentVideoStatus === 1) {
       return 'loadingState' + ' ' + 'loadingOff'
-    } else
-    return 'loadingState' + ' ' + 'loadingOn'
+    } else {
+      return 'loadingState' + ' ' + 'loadingOn'
+    }
   }
 
   indicateStatus = () => {
@@ -217,9 +219,9 @@ class App extends Component {
     const trayOpen = this.state.trayOpen
     let classToSet
     if (trayOpen) {
-      classToSet = 'trayOpen'
+      classToSet = 'trayOpen' + ' ' + 'tray'
     } else {
-      classToSet = 'trayClosed'
+      classToSet = 'trayClosed' + ' ' + 'tray'
     }
     return classToSet
   }
@@ -274,18 +276,19 @@ class App extends Component {
                 <div className={this.indicateStatus()} />
                 <Favicon url={this.handleFavicon()}/>
                 <div className={'spacer'} />
-                <h2>{`${this.state.currentChannelName}`}</h2>
-                <div className={'spacer'}> {'–'} </div>
+                <a id='currentVideoTitle' href={`https://www.are.na/channels/${this.state.currentChannel}`} target='_blank'><h2>{`${this.state.currentChannelName}`}</h2></a>
+                <div className={'smallSlash'} />
                 <p>{`${this.state.currentVideoName}`}</p>
-                <div className={'spacer'} > {'–'} </div>
-                <p>{this.state.numUsers-1} {maybePluralize(this.state.numUsers-1, 'other')} {isare(this.state.numUsers-1, 'are')} watching with you.</p>
               </div>
+              <div className={'info'}>
+              <p>{this.state.numUsers-1} {maybePluralize(this.state.numUsers-1, 'other')} {isare(this.state.numUsers-1, 'are')} watching with you</p>
               <button
                 className="button"
                 id="mute"
                 onClick={(e) => this.onMuteVideo(e)}>
                 {this.state.muted ? <div className={'sound_off'} /> : <div className={'sound_on'} />}
               </button>
+              </div>
               </footer>
             </div>
               <div className={this.handleLoadingState()} />
@@ -297,6 +300,7 @@ class App extends Component {
                 getVideoStatus={this.getVideoStatus}
                 getCurrentVideoName={this.getCurrentVideoName}
                 getClientStatus={this.getClientStatus}
+                getChannels={this.getChannels}
               />
           </div>
         </div>
