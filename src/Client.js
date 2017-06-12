@@ -15,6 +15,7 @@ class Client extends React.Component {
       currentVideoTitle: null,
       currentUsers: [],
       initialized: false,
+      youtubeStatus: -1,
     }
   }
 
@@ -36,6 +37,7 @@ class Client extends React.Component {
             initialized: false,
             muted: false,
           })
+          this.props.getClientStatus(true)
           console.log(data)
         }
         //SEE ONREADY - FIRES WHEN LOADED = TRUE
@@ -68,6 +70,7 @@ class Client extends React.Component {
       console.log('got a new channel request - unmount and resync')
       console.log('from client nextProp ' + nextProps.currentChannel)
       this.setState({loaded: false})
+      this.props.getClientStatus(false)
       this.removeRefs()
       this.leaveChannel(this.props.currentChannel, this.state.userTimeKey)
       this.syncChannel(nextProps.currentChannel)
@@ -330,11 +333,6 @@ class Client extends React.Component {
   }
 
   onStateChange = (event) => {
-    console.log(event)
-    console.log(event.data)
-    // if (event.data === 1){
-    //   console.log(`playerTime is currently `+ this.state.player.getCurrentTime())
-    // }
     this.props.getVideoStatus(event.data)
   }
 
@@ -354,8 +352,7 @@ class Client extends React.Component {
       },
     }
     return (
-      this.state.loaded
-      ? <div className='videoWrapper'>
+      <div className='videoWrapper'>
         <Youtube
           className="video"
           videoId={this.state.currentVideoId}
@@ -369,7 +366,6 @@ class Client extends React.Component {
           className="video"
         />
       </div>
-      : <div> {'Not loaded'}</div>
     )
   }
 }

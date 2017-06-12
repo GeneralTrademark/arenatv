@@ -29,6 +29,8 @@ class App extends Component {
       muted: false,
       currentVideoStatus: -1,
       trayOpen: false,
+      isLoaded: false,
+      isClientLoaded: false,
     }
     replaceUrlQuery({'ch': this.state.currentChannel })
   }
@@ -161,6 +163,19 @@ class App extends Component {
     })
   }
 
+  getClientStatus = (isLoaded) => {
+    this.setState({
+      isClientLoaded: isLoaded,
+    })
+  }
+
+  handleLoadingState = () => {
+    if (this.state.isClientLoaded === true && this.state.currentVideoStatus === 1) {
+      return 'loadingState' + ' ' + 'loadingOff'
+    } else
+    return 'loadingState' + ' ' + 'loadingOn'
+  }
+
   indicateStatus = () => {
     let status
     switch(this.state.currentVideoStatus) {
@@ -249,7 +264,8 @@ class App extends Component {
               <header>
               <div className={'logoMark'}>
                 <div className={'mark'} />
-                <h1>{'– tv'}</h1>
+                <div className={'slash'}/>
+                <h1>{'tv'}</h1>
               </div>
                 <button id="channels" onClick={(e) => this.toggleTrayState(e)}><h2>{`${this.state.channels.length} Channels`}</h2></button>
               </header>
@@ -262,7 +278,7 @@ class App extends Component {
                 <div className={'spacer'}> {'–'} </div>
                 <p>{`${this.state.currentVideoName}`}</p>
                 <div className={'spacer'} > {'–'} </div>
-                <p>{this.state.numUsers-1} {maybePluralize(this.state.numUsers-1, 'other')} {isare(this.state.numUsers-1, 'are')} watching with you. {this.state.numUsers === 1 ? ' 😞' : ' 🤗'}</p>
+                <p>{this.state.numUsers-1} {maybePluralize(this.state.numUsers-1, 'other')} {isare(this.state.numUsers-1, 'are')} watching with you.</p>
               </div>
               <button
                 className="button"
@@ -272,6 +288,7 @@ class App extends Component {
               </button>
               </footer>
             </div>
+              <div className={this.handleLoadingState()} />
               <Client
                 currentChannel={this.state.currentChannel}
                 handleChangeUsers={this.handleChangeUsers}
@@ -279,7 +296,7 @@ class App extends Component {
                 muted={this.state.muted}
                 getVideoStatus={this.getVideoStatus}
                 getCurrentVideoName={this.getCurrentVideoName}
-                getChannels={this.getChannels}
+                getClientStatus={this.getClientStatus}
               />
           </div>
         </div>
