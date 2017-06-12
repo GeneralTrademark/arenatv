@@ -44,8 +44,17 @@ header{
 
 .slash{
   display: block;
-  height: 26px;
-  border-right: 2px solid white;
+  height: 19px;
+  border-right: 2px solid #a7a7a7;
+  transform: rotate(20deg);
+  margin-right: 10px;
+  margin-left: 10px;
+}
+
+.smallSlash{
+  display: block;
+  height: 14px;
+  border-right: 2px solid #a7a7a7;
   transform: rotate(20deg);
   margin-right: 10px;
   margin-left: 10px;
@@ -66,7 +75,7 @@ footer{
   justify-content: space-between;
   align-items: center;
   z-index: 99;
-
+  flex-wrap: wrap;
 }
 
 .info{
@@ -80,7 +89,7 @@ footer{
 }
 
 .indicator{
-  margin-top: 1px;
+  margin-bottom: 1px;
   width: 24px;
   height: 12px;
   border-radius: 10px;

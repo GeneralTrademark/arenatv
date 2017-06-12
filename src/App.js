@@ -277,17 +277,18 @@ class App extends Component {
                 <Favicon url={this.handleFavicon()}/>
                 <div className={'spacer'} />
                 <h2>{`${this.state.currentChannelName}`}</h2>
-                <div className={'spacer'}> {'–'} </div>
+                <div className={'smallSlash'} />
                 <p>{`${this.state.currentVideoName}`}</p>
-                <div className={'spacer'} > {'–'} </div>
-                <p>{this.state.numUsers-1} {maybePluralize(this.state.numUsers-1, 'other')} {isare(this.state.numUsers-1, 'are')} watching with you. {this.state.numUsers === 1 ? ' 😞' : ' 🤗'}</p>
               </div>
+              <div className={'info'}>
+              <p>{this.state.numUsers-1} {maybePluralize(this.state.numUsers-1, 'other')} {isare(this.state.numUsers-1, 'are')} watching with you</p>
               <button
                 className="button"
                 id="mute"
                 onClick={(e) => this.onMuteVideo(e)}>
                 {this.state.muted ? <div className={'sound_off'} /> : <div className={'sound_on'} />}
               </button>
+              </div>
               </footer>
             </div>
               <div className={this.handleLoadingState()} />
