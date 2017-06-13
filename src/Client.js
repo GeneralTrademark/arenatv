@@ -296,7 +296,7 @@ class Client extends React.Component {
     //   })
     // }
 
-    if (!this.state.initialized && this.state.player.getPlayerState() !== 1) {
+    if (this.state.loaded && !this.state.initialized && this.state.player.getPlayerState() !== 1) {
       console.log('I set up again')
       this.props.getCurrentVideoName(this.state.currentVideoTitle)
       this.setUserTime(this.state.channel.time, this.state.channel.slug)
@@ -358,20 +358,24 @@ class Client extends React.Component {
       },
     }
     return (
-      <div className='videoWrapper'>
-        <Youtube
-          className="video"
-          videoId={this.state.currentVideoId}
-          onReady={this.onReady}
-          onPlay={this.onPlay}
-          onStateChange={this.onStateChange}
-          onPlaybackQualityChange={this.onQChange}
-          onError={this.onError}
-          onEnd={this.onEnd}
-          opts={opts}
-          className="video"
-        />
-      </div>
+      this.state.loaded
+      ? <div className='videoWrapper'>
+          <div className='videoWrapper'>
+            <Youtube
+              className="video"
+              videoId={this.state.currentVideoId}
+              onReady={this.onReady}
+              onPlay={this.onPlay}
+              onStateChange={this.onStateChange}
+              onPlaybackQualityChange={this.onQChange}
+              onError={this.onError}
+              onEnd={this.onEnd}
+              opts={opts}
+              className="video"
+            />
+          </div>
+        </div>
+      : <div> {'Not loaded'}</div>
     )
   }
 }

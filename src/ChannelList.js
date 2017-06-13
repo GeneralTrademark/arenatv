@@ -9,7 +9,8 @@ function ChannelList(props) {
   }
 
   function getChannels() {
-    console.log(props.watchers)
+
+
     const channelList = props.channels.map((channel, index) => {
       let borderColor
       switch(channel.status) {
