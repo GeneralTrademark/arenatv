@@ -26,6 +26,7 @@ class App extends Component {
       currentVideoName: '',
       channels: [],
       numUsers: 0,
+      watchers: {},
       muted: false,
       currentVideoStatus: -1,
       trayOpen: false,
@@ -59,8 +60,6 @@ class App extends Component {
     // })
   }
 
-
-
   classifyItem = (item) => {
     const isMedia = item.class === "Media"
     if (isMedia && item.source.url.indexOf('list') > 0) return "playlist"
@@ -92,6 +91,7 @@ class App extends Component {
               title: channel.title,
               health: 0,
               username: channel.user.username,
+              watchers: 0,
               // currentVideoIndex: 0,
               // time: 0,
             },
@@ -128,7 +128,8 @@ class App extends Component {
     e.preventDefault()
   }
 
-  handleChangeUsers = (num) =>{
+  handleChangeUsers = (num) => {
+    this.getWatchers()
     this.setState({
       numUsers: num,
     })
@@ -140,6 +141,26 @@ class App extends Component {
     })
     event.stopPropagation()
     event.preventDefault()
+  }
+
+  getWatchers = () => {
+    base.fetch(`channels`, {
+      context: this,
+      asArray: true,
+      then(channels){
+        // console.log(channels)
+        let watchersObj = {}
+        let counter = 0
+        channels.forEach((channel) => {
+          counter++
+          var key = channel.slug
+          watchersObj[key] = channel.watchers
+          if (counter === channels.length) {
+            this.setState({watchers: watchersObj})
+          }
+        })
+      },
+    })
   }
 
   getVideoStatus = (status) => {
@@ -206,6 +227,7 @@ class App extends Component {
   }
 
   toggleTrayState = (event) => {
+    this.getWatchers()
     const trayOpen = this.state.trayOpen
     this.setState({
       trayOpen: !trayOpen,
@@ -309,6 +331,7 @@ class App extends Component {
             handleChangeChannel={this.handleChangeChannel}
             channels={this.state.channels}
             currentChannel={this.state.currentChannel}
+            watchers={this.state.watchers}
           />
         </div>
       </div>

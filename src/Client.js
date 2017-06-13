@@ -194,6 +194,9 @@ class Client extends React.Component {
         })
         this.props.handleChangeUsers(data.length)
         // this.props.getChannels()
+        base.update(`channels/${channel}/`, {
+          data: {watchers: data.length},
+        })
         if (this.state.player.getPlayerState() === 1){
           this.updateTime(channel, this.state.userTimeKey, this.state.currentVideoTime)
         }

@@ -9,6 +9,7 @@ function ChannelList(props) {
   }
 
   function getChannels() {
+    console.log(props.watchers)
     const channelList = props.channels.map((channel, index) => {
       let borderColor
       switch(channel.status) {
@@ -65,7 +66,7 @@ function ChannelList(props) {
               <p>{channel.user.username}</p>
           </div>
           <div className='meta'>
-          <p>Current Viewers: {index}</p>
+          <p>Current Viewers: {props.watchers[channel.slug]}</p>
           </div>
         </div>
       )
