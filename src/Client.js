@@ -88,10 +88,14 @@ class Client extends React.Component {
   }
 
   leaveChannel = (channel, userTimeKey) => {
+    // this.props.handleChangeUsers(this.state.currentUsers-1, channel)
     console.log(`trying to update ${channel} at maxTime from ${userTimeKey}`)
     console.log(`there are ${this.state.currentUsers.length} users`)
     if (this.state.currentUsers.length < 2){
       this.setChannelTime(this.state.player.getCurrentTime(), channel)
+      base.update(`channels/${channel}/`, {
+        data: {watchers: 0},
+      })
     } else {
       this.updateTime(channel, userTimeKey)
     }
@@ -192,11 +196,8 @@ class Client extends React.Component {
         this.setState({
           currentUsers: data,
         })
-        this.props.handleChangeUsers(data.length)
+        this.props.handleChangeUsers(data.length, channel)
         // this.props.getChannels()
-        base.update(`channels/${channel}/`, {
-          data: {watchers: data.length},
-        })
         if (this.state.player.getPlayerState() === 1){
           this.updateTime(channel, this.state.userTimeKey, this.state.currentVideoTime)
         }

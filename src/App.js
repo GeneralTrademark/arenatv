@@ -47,7 +47,7 @@ class App extends Component {
 
   componentWillMount = () => {
     this.getChannels()
-
+    this.getWatchers()
 
     // this.getVids('arena-tv')
     // if channels changes, get all videos again
@@ -128,7 +128,10 @@ class App extends Component {
     e.preventDefault()
   }
 
-  handleChangeUsers = (num) => {
+  handleChangeUsers = (num, channel) => {
+    base.update(`channels/${channel}/`, {
+      data: {watchers: num},
+    })
     this.getWatchers()
     this.setState({
       numUsers: num,
@@ -149,16 +152,17 @@ class App extends Component {
       asArray: true,
       then(channels){
         // console.log(channels)
-        let watchersObj = {}
-        let counter = 0
-        channels.forEach((channel) => {
-          counter++
-          var key = channel.slug
-          watchersObj[key] = channel.watchers
-          if (counter === channels.length) {
-            this.setState({watchers: watchersObj})
-          }
-        })
+        this.setState({channels: channels})
+        // let watchersObj = {}
+        // let counter = 0
+        // channels.forEach((channel) => {
+        //   counter++
+        //   var key = channel.slug
+        //   watchersObj[key] = channel.watchers
+        //   if (counter === channels.length) {
+        //     this.setState({watchers: watchersObj})
+        //   }
+        // })
       },
     })
   }
