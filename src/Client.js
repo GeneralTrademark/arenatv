@@ -38,7 +38,7 @@ class Client extends React.Component {
             muted: false,
           })
           this.props.getClientStatus(true)
-          console.log(data)
+          // console.log(data)
         }
         //SEE ONREADY - FIRES WHEN LOADED = TRUE
       },
@@ -46,13 +46,13 @@ class Client extends React.Component {
   }
 
   componentWillMount () {
-    console.log('get channel from client to set up sync with ' + this.props.currentChannel)
+    // console.log('get channel from client to set up sync with ' + this.props.currentChannel)
     this.syncChannel(this.props.currentChannel)
   }
 
   tick = () =>{
-    console.log('timer tick')
-    console.log(this.state.player.getCurrentTime())
+    // console.log('timer tick')
+    // console.log(this.state.player.getCurrentTime())
     let time = this.state.player.getCurrentTime()
     base.update(`channels/${this.props.currentChannel}/`,{
       data: {time: time},
@@ -62,13 +62,13 @@ class Client extends React.Component {
       data: {time: time},
     })
     this.setState({currentVideoTime: time})
-    console.log(this.state.currentVideoTime)
+    // console.log(this.state.currentVideoTime)
   }
 
   componentWillUpdate(nextProps){
     if (nextProps.currentChannel !== this.props.currentChannel) {
-      console.log('got a new channel request - unmount and resync')
-      console.log('from client nextProp ' + nextProps.currentChannel)
+      // console.log('got a new channel request - unmount and resync')
+      // console.log('from client nextProp ' + nextProps.currentChannel)
       this.setState({loaded: false})
       this.props.getClientStatus(false)
       this.removeRefs()
@@ -89,8 +89,8 @@ class Client extends React.Component {
 
   leaveChannel = (channel, userTimeKey) => {
     // this.props.handleChangeUsers(this.state.currentUsers-1, channel)
-    console.log(`trying to update ${channel} at maxTime from ${userTimeKey}`)
-    console.log(`there are ${this.state.currentUsers.length} users`)
+    // console.log(`trying to update ${channel} at maxTime from ${userTimeKey}`)
+    // console.log(`there are ${this.state.currentUsers.length} users`)
     if (this.state.currentUsers.length < 2){
       this.setChannelTime(this.state.player.getCurrentTime(), channel)
       base.update(`channels/${channel}/`, {
@@ -110,7 +110,7 @@ class Client extends React.Component {
   }
 
   updateTime = () => {
-    console.log('updating self' + this.props.currentChannel + ' and checking other times')
+    // console.log('updating self' + this.props.currentChannel + ' and checking other times')
     const that = this
     base.update(`channels/${this.props.currentChannel}/userTime/${this.state.userTimeKey}`,{
       context: this,
@@ -122,7 +122,7 @@ class Client extends React.Component {
   }
 
   updateSelf = (time) => {
-    console.log('updating self at ' + this.props.currentChannel + 'at ' + time)
+    // console.log('updating self at ' + this.props.currentChannel + 'at ' + time)
     this.state.player.seekTo(time, true)
     // this.state.player.playVideo()
     base.update(`channels/${this.props.currentChannel}/userTime/${this.state.userTimeKey}`,{
@@ -132,7 +132,7 @@ class Client extends React.Component {
   }
 
   calculateMaxTime = () => {
-    console.log('Find new max time')
+    // console.log('Find new max time')
     base.fetch(`channels/${this.props.currentChannel}/userTime/`, {
       context: this,
       asArray: true,
@@ -146,7 +146,7 @@ class Client extends React.Component {
           // Once done - pick the largest index from that array and set channel state
           if (counter === users.length) {
             if (Math.max(...timeStamps) > this.state.currentVideoTime){
-              console.log('newMaxTime is ' + Math.max(...timeStamps) + ' at ' + this.props.currentChannel)
+              // console.log('newMaxTime is ' + Math.max(...timeStamps) + ' at ' + this.props.currentChannel)
               this.setChannelTime(Math.max(...timeStamps), this.props.currentChannel)
             }
           }
@@ -159,9 +159,9 @@ class Client extends React.Component {
     this.timeRef = base.listenTo(`channels/${channel}/time`, {
       context: this,
       then(data){
-        console.log(`data is ${data} + ${this.state.player.getCurrentTime()} grabbed from ${channel}`)
-        console.log(data < this.state.player.getCurrentTime() - 2 || data > this.state.player.getCurrentTime() + 2)
-        console.log('got new time from ' + channel)
+        // console.log(`data is ${data} + ${this.state.player.getCurrentTime()} grabbed from ${channel}`)
+        // console.log(data < this.state.player.getCurrentTime() - 2 || data > this.state.player.getCurrentTime() + 2)
+        // console.log('got new time from ' + channel)
         if (data < this.state.player.getCurrentTime() - 2 || data > this.state.player.getCurrentTime() + 2){
           this.updateSelf(data)
         }
@@ -177,7 +177,7 @@ class Client extends React.Component {
       then(index) {
         if (index !== this.state.currentVideoIndex){
           this.skipToNext(index)
-          console.log('the video changed ' + index)
+          // console.log('the video changed ' + index)
         }
         // this.setState({
         //   currentVideoIndex: index,
@@ -202,13 +202,13 @@ class Client extends React.Component {
           this.updateTime(channel, this.state.userTimeKey, this.state.currentVideoTime)
         }
         if (data.length < 2){
-          console.log('I started the timer')
+          // console.log('I started the timer')
           this.timer = setInterval(this.tick, 5000)
         } else {
-          console.log('I cleared the timer')
+          // console.log('I cleared the timer')
           clearInterval(this.timer)
         }
-        console.log('users changed')
+        // console.log('users changed')
       },
     })
   }
@@ -223,7 +223,7 @@ class Client extends React.Component {
 
     base.remove(`channels/${this.props.currentChannel}/userPresence/${this.state.userPresenceKey}`)
     base.remove(`channels/${this.props.currentChannel}/userTime/${this.state.userTimeKey}`)
-    console.log('refs got removed')
+    // console.log('refs got removed')
 
     clearInterval(this.timer)
   }
@@ -241,7 +241,7 @@ class Client extends React.Component {
     this.userPresenceRef.onDisconnect().remove()
     let generatedUserKey = this.userPresenceRef.key
     this.setState({userPresenceKey: generatedUserKey})
-    console.log('push user')
+    // console.log('push user')
   }
 
   setUserTime = (time, channel) => {
@@ -252,7 +252,7 @@ class Client extends React.Component {
     this.userTimeRef.onDisconnect().remove()
     let generatedUserKey = this.userTimeRef.key
     this.setState({userTimeKey: generatedUserKey})
-    console.log('push user time at ' + time )
+    // console.log('push user time at ' + time )
   }
 
   componentWillUnmount(){
@@ -261,7 +261,7 @@ class Client extends React.Component {
   }
 
   skipToNext = (index) => {
-    console.log('the next video is playing ' + index)
+    // console.log('the next video is playing ' + index)
     this.setState({
       currentVideoIndex: index,
       currentVideoId: this.state.channel.videos[index].url,
@@ -290,7 +290,7 @@ class Client extends React.Component {
     this.setState({
       player: event.target,
     })
-    console.log('I got onready event!! am I initialized? ' + this.state.initialized)
+    // console.log('I got onready event!! am I initialized? ' + this.state.initialized)
     // if (!this.state.initialized){
     //   this.setState({
     //     player: event.target,
@@ -298,7 +298,7 @@ class Client extends React.Component {
     // }
 
     if (this.state.loaded && !this.state.initialized && this.state.player.getPlayerState() !== 1) {
-      console.log('I set up again')
+      // console.log('I set up again')
       this.props.getCurrentVideoName(this.state.currentVideoTitle)
       this.setUserTime(this.state.channel.time, this.state.channel.slug)
       this.addUser(this.state.channel.slug)
@@ -308,9 +308,9 @@ class Client extends React.Component {
   }
 
   onQChange = () => {
-    console.log('quality changed')
-    console.log(this.state.player.getCurrentTime())
-    console.log(this.state.currentVideoTime)
+    // console.log('quality changed')
+    // console.log(this.state.player.getCurrentTime())
+    // console.log(this.state.currentVideoTime)
     this.state.player.seekTo(this.state.currentVideoTime, true)
   }
 
@@ -330,7 +330,7 @@ class Client extends React.Component {
       context: this,
       asArray: false,
       then(index) {
-        console.log('i need to go to next')
+        // console.log('i need to go to next')
         this.incrementVideoIndex(index)
       },
     })

@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import base from './helpers/base'
 import Client from './Client'
 import ChannelList from './ChannelList'
-import { decode, configureUrlQuery, addUrlProps, replaceUrlQuery, UrlQueryParamTypes } from 'react-url-query'
+import {configureUrlQuery, addUrlProps, replaceUrlQuery, UrlQueryParamTypes } from 'react-url-query'
 import Favicon from 'react-favicon'
 import config from './config'
 import './App.css'
@@ -14,8 +14,6 @@ const urlPropsQueryConfig = {
 configureUrlQuery({
   addRouterParams: false,
 })
-
-const defaultChannelSlug = 'herzog'
 
 class App extends Component {
   constructor(props) {
@@ -38,7 +36,7 @@ class App extends Component {
 
   componentWillReceiveProps = (nextProps) => {
     if (nextProps.URICurrentChannel !== this.props.URICurrentChannel) {
-      console.log('SWITCHING!!!!!')
+      // console.log('SWITCHING!!!!!')
       this.setState({
         currentChannel: nextProps.URICurrentChannel,
       })
@@ -168,7 +166,7 @@ class App extends Component {
   }
 
   getVideoStatus = (status) => {
-    console.log(status)
+    // console.log(status)
     this.setState({
       currentVideoStatus: status,
     })
@@ -197,9 +195,9 @@ class App extends Component {
 
   handleLoadingState = () => {
     if (this.state.isClientLoaded === true && this.state.currentVideoStatus === 1) {
-      return 'loadingState' + ' ' + 'loadingOff'
+      return 'loadingState loadingOff'
     } else {
-      return 'loadingState' + ' ' + 'loadingOn'
+      return 'loadingState loadingOn'
     }
   }
 
@@ -245,9 +243,9 @@ class App extends Component {
     const trayOpen = this.state.trayOpen
     let classToSet
     if (trayOpen) {
-      classToSet = 'trayOpen' + ' ' + 'tray'
+      classToSet = 'trayOpen tray'
     } else {
-      classToSet = 'trayClosed' + ' ' + 'tray'
+      classToSet = 'trayClosed tray'
     }
     return classToSet
   }
@@ -302,7 +300,7 @@ class App extends Component {
                 <div className={this.indicateStatus()} />
                 <Favicon url={this.handleFavicon()}/>
                 <div className={'spacer'} />
-                <a id='currentVideoTitle' href={`https://www.are.na/channels/${this.state.currentChannel}`} target='_blank'><h2>{`${this.state.currentChannelName}`}</h2></a>
+                <a id='currentVideoTitle' href={`https://www.are.na/channels/${this.state.currentChannel}`} target='_blank' rel="noopener noreferrer"><h2>{`${this.state.currentChannelName}`}</h2></a>
                 <div className={'smallSlash'} />
                 <p>{`${this.state.currentVideoName}`}</p>
               </div>
