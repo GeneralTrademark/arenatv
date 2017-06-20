@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import base from './helpers/base'
 import Client from './Client'
 import ChannelList from './ChannelList'
-import { decode, configureUrlQuery, addUrlProps, replaceUrlQuery, UrlQueryParamTypes } from 'react-url-query'
+import {configureUrlQuery, addUrlProps, replaceUrlQuery, UrlQueryParamTypes } from 'react-url-query'
 import Favicon from 'react-favicon'
 import config from './config'
 import './App.css'
@@ -15,8 +15,6 @@ configureUrlQuery({
   addRouterParams: false,
 })
 
-const defaultChannelSlug = 'herzog'
-
 class App extends Component {
   constructor(props) {
     super(props)
@@ -26,16 +24,20 @@ class App extends Component {
       currentVideoName: '',
       channels: [],
       numUsers: 0,
+      watchers: {},
       muted: false,
       currentVideoStatus: -1,
       trayOpen: false,
+      isLoaded: false,
+      isClientLoaded: false,
+      betaOpen: false,
     }
     replaceUrlQuery({'ch': this.state.currentChannel })
   }
 
   componentWillReceiveProps = (nextProps) => {
     if (nextProps.URICurrentChannel !== this.props.URICurrentChannel) {
-      console.log('SWITCHING!!!!!')
+      // console.log('SWITCHING!!!!!')
       this.setState({
         currentChannel: nextProps.URICurrentChannel,
       })
@@ -44,7 +46,7 @@ class App extends Component {
 
   componentWillMount = () => {
     this.getChannels()
-
+    this.getWatchers()
 
     // this.getVids('arena-tv')
     // if channels changes, get all videos again
@@ -56,8 +58,6 @@ class App extends Component {
     //   },
     // })
   }
-
-
 
   classifyItem = (item) => {
     const isMedia = item.class === "Media"
@@ -90,6 +90,7 @@ class App extends Component {
               title: channel.title,
               health: 0,
               username: channel.user.username,
+              watchers: 0,
               // currentVideoIndex: 0,
               // time: 0,
             },
@@ -126,7 +127,11 @@ class App extends Component {
     e.preventDefault()
   }
 
-  handleChangeUsers = (num) =>{
+  handleChangeUsers = (num, channel) => {
+    base.update(`channels/${channel}/`, {
+      data: {watchers: num},
+    })
+    this.getWatchers()
     this.setState({
       numUsers: num,
     })
@@ -140,7 +145,29 @@ class App extends Component {
     event.preventDefault()
   }
 
+  getWatchers = () => {
+    base.fetch(`channels`, {
+      context: this,
+      asArray: true,
+      then(channels){
+        // console.log(channels)
+        this.setState({channels: channels})
+        // let watchersObj = {}
+        // let counter = 0
+        // channels.forEach((channel) => {
+        //   counter++
+        //   var key = channel.slug
+        //   watchersObj[key] = channel.watchers
+        //   if (counter === channels.length) {
+        //     this.setState({watchers: watchersObj})
+        //   }
+        // })
+      },
+    })
+  }
+
   getVideoStatus = (status) => {
+    // console.log(status)
     this.setState({
       currentVideoStatus: status,
     })
@@ -159,6 +186,20 @@ class App extends Component {
     this.setState({
       currentVideoName: name,
     })
+  }
+
+  getClientStatus = (isLoaded) => {
+    this.setState({
+      isClientLoaded: isLoaded,
+    })
+  }
+
+  handleLoadingState = () => {
+    if (this.state.isClientLoaded === true && this.state.currentVideoStatus === 1) {
+      return 'loadingState loadingOff'
+    } else {
+      return 'loadingState loadingOn'
+    }
   }
 
   indicateStatus = () => {
@@ -189,6 +230,7 @@ class App extends Component {
   }
 
   toggleTrayState = (event) => {
+    this.getWatchers()
     const trayOpen = this.state.trayOpen
     this.setState({
       trayOpen: !trayOpen,
@@ -202,11 +244,17 @@ class App extends Component {
     const trayOpen = this.state.trayOpen
     let classToSet
     if (trayOpen) {
-      classToSet = 'trayOpen'
+      classToSet = 'trayOpen tray'
     } else {
-      classToSet = 'trayClosed'
+      classToSet = 'trayClosed tray'
     }
     return classToSet
+  }
+
+  toggleBeta = () => {
+    this.setState({
+      betaOpen: !this.state.betaOpen,
+    })
   }
 
   handleFavicon = () => {
@@ -249,30 +297,54 @@ class App extends Component {
               <header>
               <div className={'logoMark'}>
                 <div className={'mark'} />
-                <h1>{'– tv'}</h1>
+                <div className={'slash'}/>
+                <h1>{'tv'}</h1>
               </div>
-                <button id="channels" onClick={(e) => this.toggleTrayState(e)}><h2>{`${this.state.channels.length} Channels`}</h2></button>
+                <button id="channels" onClick={(e) => this.toggleTrayState(e)}><h2>{`${this.state.trayOpen? ' ' : '→'} ${this.state.channels.length} Channels `}</h2></button>
               </header>
               <footer>
               <div className={'info'}>
+                <div className={this.state.betaOpen ? 'betaMarker channelListItem' : 'betaClosed channelListItem'}>
+                  <div onClick={(e) => this.toggleBeta(e)} className={'closeMarker'}>{this.state.betaOpen ? '✕' : '?'}</div>
+                  <p>Thanks for visiting! This project is still in alpha so if you run into any issues please refresh the page.</p>
+                  <p>We made this to provide a method for ambiently watching <a href="https://www.are.na/">are.na</a> channels that include video. Maybe put arenatv on while sewing, soldering, watering plants or just laying around.</p>
+                  <p>A channel needs attention to stay alive. It will only progress if you or someone else is watching. If you want to watch with a friend, paste the url of the channel you're watching in a message to them. When they join, you will both be watching concurrently.</p>
+
+                  <p>Features coming at some point:</p>
+                  <ul>
+                    <li>Videos ordered by active viewers</li>
+                    <li>Paste are.na url to create channel</li>
+                    <li>Live commenting/drawing over videos</li>
+                    <li>Vote to skip</li>
+                    <li>Better performance</li>
+                  </ul>
+
+                  <p>The site is pulling content from the <a href="https://www.are.na/callil-capuozzo/arenatv">arenatv</a> superchannel. Huge thanks to <a href="https://www.are.na/">are.na</a> for being amazing. The super channel is open, if you'd like to add channels go ahead and the channel list will update shortly.</p>
+
+                  <p>Built with react + now + sustenance + hydration by <a href="http://generaltrademark.com">generaltrademark</a></p>
+
+                  <p>Comments or ideas? (please talk to us)</p>
+                  <p>info@generaltrademark.com or <a href="https://twitter.com/_callil">_callil</a> or <a href="https://twitter.com/kinson_gavin">@kinson_gavin</a></p>
+                </div>
                 <div className={this.indicateStatus()} />
                 <Favicon url={this.handleFavicon()}/>
                 <div className={'spacer'} />
-                <h2>{`${this.state.currentChannelName}`}</h2>
-                <div className={'spacer'}> {'–'} </div>
+                <a id='currentVideoTitle' href={`https://www.are.na/channels/${this.state.currentChannel}`} target='_blank' rel="noopener noreferrer"><h2>{`${this.state.currentChannelName}`}</h2></a>
+                <div className={'smallSlash'} />
                 <p>{`${this.state.currentVideoName}`}</p>
-                <div className={'spacer'} > {'–'} </div>
-                <p>{this.state.numUsers-1} {maybePluralize(this.state.numUsers-1, 'other')} {isare(this.state.numUsers-1, 'are')} watching with you.</p>
-                {this.state.numUsers === 1 ? ' 😞' : null}
               </div>
+              <div className={'info'}>
+              <p>{this.state.numUsers-1} {maybePluralize(this.state.numUsers-1, 'other')} {isare(this.state.numUsers-1, 'are')} watching with you</p>
               <button
                 className="button"
                 id="mute"
                 onClick={(e) => this.onMuteVideo(e)}>
                 {this.state.muted ? <div className={'sound_off'} /> : <div className={'sound_on'} />}
               </button>
+              </div>
               </footer>
             </div>
+              <div className={this.handleLoadingState()} />
               <Client
                 currentChannel={this.state.currentChannel}
                 handleChangeUsers={this.handleChangeUsers}
@@ -280,6 +352,8 @@ class App extends Component {
                 muted={this.state.muted}
                 getVideoStatus={this.getVideoStatus}
                 getCurrentVideoName={this.getCurrentVideoName}
+                getClientStatus={this.getClientStatus}
+                getChannels={this.getChannels}
               />
           </div>
         </div>
@@ -288,6 +362,7 @@ class App extends Component {
             handleChangeChannel={this.handleChangeChannel}
             channels={this.state.channels}
             currentChannel={this.state.currentChannel}
+            watchers={this.state.watchers}
           />
         </div>
       </div>
