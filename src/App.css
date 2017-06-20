@@ -233,3 +233,58 @@ header, footer {
 #currentVideoTitle:hover{
   color: white;
 }
+
+.betaClosed{
+  position: absolute;
+  top: 50px;
+  right: 0px;
+  /*background-color: black;*/
+  width: 33px;
+  height: 37px;
+  padding: 10px;
+  margin-right: 16px;
+  overflow: hidden;
+  text-align: left;
+  cursor: default;
+  border: 1px solid rgba(255,255,255, .5);
+}
+
+.betaMarker{
+  position: absolute;
+  top: 50px;
+  right: 0px;
+  background-color: black;
+  margin-right: 16px;
+  width: 250px;
+  height: 50vh;
+  padding: 10px;
+  overflow: scroll;
+  text-align: left;
+  cursor: default;
+}
+
+.closeMarker{
+  text-align: right;
+  cursor: pointer;
+  margin: 0px;
+  padding-bottom: 10px;
+  padding-right: 2px;
+}
+
+.betaMarker a{
+  text-decoration: underline;
+}
+
+.betaMarker p{
+  font-size: 12px;
+  padding-bottom: 10px;
+}
+
+.betaMarker ul {
+  margin-top: 0px;
+}
+
+.betaMarker li{
+  font-size: 12px;
+  text-align: left;
+}

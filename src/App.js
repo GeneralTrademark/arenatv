@@ -30,6 +30,7 @@ class App extends Component {
       trayOpen: false,
       isLoaded: false,
       isClientLoaded: false,
+      betaOpen: false,
     }
     replaceUrlQuery({'ch': this.state.currentChannel })
   }
@@ -250,6 +251,12 @@ class App extends Component {
     return classToSet
   }
 
+  toggleBeta = () => {
+    this.setState({
+      betaOpen: !this.state.betaOpen,
+    })
+  }
+
   handleFavicon = () => {
     let data
     switch(this.state.currentVideoStatus) {
@@ -293,10 +300,32 @@ class App extends Component {
                 <div className={'slash'}/>
                 <h1>{'tv'}</h1>
               </div>
-                <button id="channels" onClick={(e) => this.toggleTrayState(e)}><h2>{`${this.state.channels.length} Channels`}</h2></button>
+                <button id="channels" onClick={(e) => this.toggleTrayState(e)}><h2>{`${this.state.trayOpen? ' ' : '→'} ${this.state.channels.length} Channels `}</h2></button>
               </header>
               <footer>
               <div className={'info'}>
+                <div className={this.state.betaOpen ? 'betaMarker channelListItem' : 'betaClosed channelListItem'}>
+                  <div onClick={(e) => this.toggleBeta(e)} className={'closeMarker'}>{this.state.betaOpen ? '✕' : '?'}</div>
+                  <p>Thanks for visiting! This project is still in alpha so if you run into any issues please refresh the page.</p>
+                  <p>We made this to provide a method for ambiently watching <a href="https://www.are.na/">are.na</a> channels that include video. Maybe put arenatv on while sewing, soldering, watering plants or just laying around.</p>
+                  <p>A channel needs attention to stay alive. It will only progress if you or someone else is watching. If you want to watch with a friend, paste the url of the channel you're watching in a message to them. When they join, you will both be watching concurrently.</p>
+
+                  <p>Features coming at some point:</p>
+                  <ul>
+                    <li>Videos ordered by active viewers</li>
+                    <li>Paste are.na url to create channel</li>
+                    <li>Live commenting/drawing over videos</li>
+                    <li>Vote to skip</li>
+                    <li>Better performance</li>
+                  </ul>
+
+                  <p>The site is pulling content from the <a href="https://www.are.na/callil-capuozzo/arenatv">arenatv</a> superchannel. Huge thanks to <a href="https://www.are.na/">are.na</a> for being amazing. The super channel is open, if you'd like to add channels go ahead and the channel list will update shortly.</p>
+
+                  <p>Built with react + now + sustenance + hydration by <a href="http://generaltrademark.com">generaltrademark</a></p>
+
+                  <p>Comments or ideas? (please talk to us)</p>
+                  <p>info@generaltrademark.com or <a href="https://twitter.com/_callil">_callil</a> or <a href="https://twitter.com/kinson_gavin">@kinson_gavin</a></p>
+                </div>
                 <div className={this.indicateStatus()} />
                 <Favicon url={this.handleFavicon()}/>
                 <div className={'spacer'} />
