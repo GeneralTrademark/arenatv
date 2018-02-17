@@ -1,5 +1,8 @@
 import ReactPlayer from 'react-player'
 
+const youtubeRegex = /(youtu(?:\.be|be\.com)\/(?:.*v(?:\/|=)|(?:.*\/)?)([\w'-]+))/gi
+
+
 function makeHash() {
   let text = ''
   let possible =
@@ -11,11 +14,7 @@ function makeHash() {
 
 // only sanitizes youtube, but could support more srcs
 function sanitizeURL(url) {
-  // in the future (ECMA 2018) we can just return youtubeResult.fullURL which is pretty cool
-  // const youtubeRegex = /(?<fullURL>youtu(?:\.be|be\.com)\/(?<youtubeID>?:.*v(?:\/|=)|(?:.*\/)?)([\w'-]+))/gi
-
   // returns 2 match groups : URL with youtube.com and ID [0], and only ID [1]
-  const youtubeRegex = /(youtu(?:\.be|be\.com)\/(?:.*v(?:\/|=)|(?:.*\/)?)([\w'-]+))/gi
   const youtubeResult = url.match(youtubeRegex)
   if (youtubeResult) {
     return youtubeResult[0]
@@ -23,11 +22,17 @@ function sanitizeURL(url) {
   return url
 }
 
+function getYoutubeID(url) {
+  const regExp = /.*(?:youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=)([^#\&\?]*).*/
+  const match = url.match(regExp)
+  return (match && match[1].length==11) ? match[1] : false
+}
+
 // inserts a valdity message into a copy of the block
 function mm(isValid, message, item) {
   return {
     ...item,
-    macarenaURLValidity: { isValid, message }
+    validity: { isValid, message }
   }
 }
 
@@ -69,7 +74,7 @@ function validateWithMessage(item) {
   const sanitizedItem = Object.assign(
     {},
     { ...item },
-    { macarenaURL: sanitizedURL }
+    { sanitizedURL, }
   )
   // check if reactplayer can play
   if (ReactPlayer.canPlay(sanitizedURL)) {
@@ -82,7 +87,7 @@ function validateWithMessage(item) {
 // Valid blocks don't need titles so we add one if it is missing
 function scrubTitle(title) {
   if (title === null || title === '') {
-    return 'Untitled in Are.na'
+    return 'Untitled on Are.na'
   }
   return title
 }
@@ -202,6 +207,10 @@ function decrementInList(list, currentIndex) {
   return false
 }
 
+function getThumbnail(url) {
+
+}
+
 export {
   sanitizeURL,
   makeHash,
@@ -214,5 +223,6 @@ export {
   sortChannelContents,
   immutablyChangeContents,
   incrementInList,
-  decrementInList
+  decrementInList,
+  getYoutubeID,
 }

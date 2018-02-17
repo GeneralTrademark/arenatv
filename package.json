@@ -9,16 +9,17 @@
   },
   "dependencies": {
     "classnames": "^2.2.5",
-    "firebase": "^4.10.0",
+    "firebase": "^4.1.0",
     "he": "^1.1.1",
     "history": "^4.6.1",
-    "re-base": "^3.2.2",
+    "re-base": "^3.0.1",
     "react": "^16.2.0",
     "react-dom": "^16.2.0",
     "react-favicon": "^0.0.13",
     "react-player": "^1.1.2",
     "react-router-dom": "^4.2.2",
-    "react-url-query": "^1.4.0"
+    "react-url-query": "^1.4.0",
+    "youtube-node": "^1.3.2"
   },
   "description": "Weekly Are.na video publication",
   "scripts": {

@@ -1,10 +1,4 @@
 import React, { Component } from 'react'
-import {
-  BrowserRouter as Router,
-  Route,
-  Switch,
-  withRouter
-} from 'react-router-dom'
 
 import VideoItem from './components/VideoItem'
 import Controls from './components/Controls'
@@ -13,12 +7,11 @@ import { tinyAPI } from './lib/api'
 import base from './lib/base'
 import {
   playerStates,
-  sortKeys,
-  sortChannelContents,
   immutablyChangeContents,
   validateWithMessage,
   incrementInList,
-  decrementInList
+  decrementInList,
+  getYoutubeID
 } from './lib/helpers'
 
 class Main extends Component {
@@ -26,34 +19,50 @@ class Main extends Component {
     super(props)
     this.state = {
       isPlaying: false,
-      playerStatus: '',
+      playerStatus: playerStates.idle,
       volume: 0.8,
-      currentItem: '',
-      playlist: '',
-      currentPlayerID: '',
+      currentItem: null,
+      playlistChannel: null,
+      currentPlayerID: null,
     }
     this.API = new tinyAPI()
-    // this.playerRef = null
   }
 
   componentWillMount = () => {
-    base.listenTo('currentChannel', {
+    this.initializeCookies()
+    this.callBase('slug', false)
+  }
+
+  // gets the slug of the week from firebase
+  callBase = (key, asArray, callback) => {
+    base.listenTo(key, {
      context: this,
-     asArray: false,
-     then(data) {
-       this.getChannelContents(data)
-     },
+     asArray: asArray,
+     then(slug) { this.callArena(slug) }
    })
-    console.log(process.env)
   }
 
-  requestCurrentChannel = () => {
+  // ask arena to return the contents of the channel of the week
+  callArena = (slug) => {
+    Promise.resolve(this.API.getFullChannel(slug)).then(playlistChannel => {
+      const validatedContents = playlistChannel.contents.map(item => {
+        return validateWithMessage(item)
+      })
+      const onlyValids = validatedContents.filter(
+        item => item.validity.isValid
+      )
+      const withMetadata = onlyValids.map(item => {
+        const id = getYoutubeID(item.sanitizedURL)
+        return {
+          ...item,
+          largeThumb: `https://i1.ytimg.com/vi/${id}/maxresdefault.jpg`
+        }
+      })
+      const resolvedChannel = immutablyChangeContents(withMetadata, playlistChannel)
 
-  }
-
-  getChannelContents = (data) => {
-    console.log(data)
-  }
+      this.setState({ playlistChannel: resolvedChannel })
+  })
+}
 
   initializeCookies = () => {
     // FYI cookie returns string
@@ -72,8 +81,16 @@ class Main extends Component {
     this.setState({ isPlaying: false, playerStatus: playerStates.idle })
   }
 
+  togglePlayPause = () => {
+    if (this.state.isPlaying) {
+      this.pause()
+    } else {
+      this.play()
+    }
+  }
+
   // update +1 track and index
-  goToNextTrack = () => {
+  gotToNext = () => {
     const { playlist, currentItem } = this.state
     const trackList = playlist.contents
     const indexOfCurrentItem = trackList.findIndex(
@@ -89,7 +106,7 @@ class Main extends Component {
   }
 
   //  update -1 track and index
-  goToPreviousTrack = () => {
+  goToPrevious = () => {
     const { playlist, currentItem } = this.state
     const trackList = playlist.contents
     const indexOfCurrentItem = trackList.findIndex(
@@ -115,6 +132,10 @@ class Main extends Component {
     // console.log(e, 'start')
   }
 
+  handleOnEnded = e => {
+    // console.log(e, 'start')
+  }
+
   handleOnPlay = e => {
     this.setState({ playerStatus: playerStates.playing })
   }
@@ -133,36 +154,39 @@ class Main extends Component {
 
   handleOnError = event => {
     this.setState({ playerStatus: playerStates.errored })
-    this.goToNextTrack()
+    this.gotToNext()
   }
 
-  makeVideoList = (channel) => {
-    return channel.map(chan => {
-      return <VideoItem
-        {...this.state}
-        // ref={this.ref}
-        returnRef={this.returnRef}
-        handlePlayback={this.handlePlayback}
-        goToNextTrack={this.goToNextTrack}
-        goToPreviousTrack={this.goToPreviousTrack}
-        handleOnReady={this.handleOnReady}
-        handleOnStart={this.handleOnStart}
-        handleOnPlay={this.handleOnPlay}
-        handleOnProgress={this.handleOnProgress}
-        handleOnDuration={this.handleOnDuration}
-        handleOnBuffer={this.handleOnBuffer}
-        handleOnError={this.handleOnError}
-      />
-    })
+  makeVideoList = () => {
+    const { playlistChannel } = this.state
+    if (playlistChannel) {
+      return playlistChannel.contents.map(block => {
+        return <VideoItem
+          {...this.state}
+          key={block.id}
+          block={block}
+          id={block.id}
+          handleOnReady={this.handleOnReady}
+          handleOnStart={this.handleOnStart}
+          handleOnPlay={this.handleOnPlay}
+          handleOnProgress={this.handleOnProgress}
+          handleOnDuration={this.handleOnDuration}
+          handleOnBuffer={this.handleOnBuffer}
+          handleOnError={this.handleOnError}
+          handleOnEnded={this.handleOnEnded}
+        />
+      })
+    }
+    return null
   }
 
   render() {
+
     return (
       <main>
         <span id="carfullyBalancedContainer">
-
-          <Controls
-          />
+          { this.makeVideoList() }
+          <Controls />
         </span>
 
       </main>

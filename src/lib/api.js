@@ -27,14 +27,14 @@ class tinyAPI {
     ).then(data => parse.paginatedPlaylistChannel(data))
   }
 
-  getChannelContents = () => {
-    return this.get(`${BASE}/channels/${playlistChannel}/contents`).then(data =>
+  getChannelContents = (slug) => {
+    return this.get(`${BASE}/channels/${slug}/contents`).then(data =>
       parse.playlistChannel(data)
     )
   }
 
-  getFullChannel = (playlistID, pagination) => {
-    return this.get(`${BASE}/channels/${playlistID}`).then(data =>
+  getFullChannel = (slug, pagination) => {
+    return this.get(`${BASE}/channels/${slug}`).then(data =>
       parse.playlist(data)
     )
   }
